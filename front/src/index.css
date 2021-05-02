@@ -1,0 +1,86 @@
+/* normalizer */
+@import url(./vendor/normalize.css);
+
+/*fonts*/
+@import url(./vendor/fonts/Inter/inter.css);
+
+/* main blocks */
+@import url(./blocks/page/page.css);
+@import url(./blocks/header/header.css);
+@import url(./blocks/promo/promo.css);
+@import url(./blocks/navtab/navtab.css);
+@import url(./blocks/aboutproject/aboutproject.css);
+@import url(./blocks/infoblock/infoblock.css);
+@import url(./blocks/process/process.css);
+@import url(./blocks/techs/techs.css);
+@import url(./blocks/aboutme/aboutme.css);
+@import url(./blocks/portfolio/portfolio.css);
+@import url(./blocks/link-list/link-list.css);
+@import url(./blocks/footer/footer.css);
+
+/*mods*/
+@import url(./blocks/header/_color/header_color-blue.css);
+
+/*movies*/
+@import url(./blocks/account-btn/account-btn.css);
+@import url(./blocks/custom-checkbox/custom-checkbox.css);
+@import url(./blocks/menubtn/menubtn.css);
+@import url(./blocks/moviecard/moviecard.css);
+@import url(./blocks/moviecardlist/moviecardlist.css);
+@import url(./blocks/searchform/searchform.css);
+@import url(./blocks/switch/switch.css);
+
+/* register,login */
+@import url(./blocks/profile/profile.css);
+@import url(./blocks/auth/auth.css);
+@import url(./blocks/form/form.css);
+@import url(./blocks/auth/__btn/_action/auth__btn_action-redirect.css);
+@import url(./blocks/auth/__btn/_action/auth__btn_action-submit.css);
+
+/* error */
+@import url(./blocks/error/error.css);
+@import url(./blocks/navigation/navigation.css);
+@import url(./blocks/closebtn/closebtn.css);
+@import url(./blocks/popup/popup.css);
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  outline: none;
+}
+
+.header__nav_theme-white * {
+  color: white;
+}
+
+.moviecardlist__notfound {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  color: gray;
+}
+
+
+@media screen and (max-width: 600px) {
+  .moviecardlist__notfound {
+    font-size: 25px;
+  }
+}
+
+.menubtn__hr{
+  border:none;
+  background: black;
+  height:3px;
+  margin:0;
+}
+
+.menubtn_color-white > hr {
+  background-color: white;
+}

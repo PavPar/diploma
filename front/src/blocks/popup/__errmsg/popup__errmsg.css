@@ -1,0 +1,29 @@
+.popup__errmsg {
+    font-size: 12px;
+    line-height: 15px;
+    color: #FF0000;
+    min-height: 1em;
+    max-height: none;
+}
+
+.popup__errmsg:nth-of-type(1) {
+    margin-bottom: 20px;
+}
+
+.popup__errmsg:nth-of-type(2) {
+    margin-bottom: 32px;
+}
+
+@media screen and (max-width:535px) {
+    .popup__errmsg {
+        font-size: 10px;
+        line-height: 13px;
+        min-height: 3em;
+    }
+    .popup__errmsg:nth-of-type(1) {
+        margin-bottom: 10px;
+    }
+    .popup__errmsg:nth-of-type(2) {
+        margin-bottom: 20px;
+    }
+}

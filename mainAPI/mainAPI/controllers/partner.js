@@ -20,17 +20,50 @@ const parseResult = (res) => {
   }
   return Promise.reject(res.status);
 };
+
+// module.exports.getPartnerProducts = (req, res, next) => {
+//   Partner.findById(req.params.partnerID)
+//     .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+//     .then((partnerData) => fetch(`${partnerData.baseUrl}/tokenize`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         searchReq: ' 3 хлеба гербер',
+//       }),
+//     }))
+//     .then(parseResult)
+//     .then((result) => { res.send(result); })
+//     .catch((err) => handleError(err))
+//     .catch((err) => next(err));
+// };
+
+module.exports.getAllPartners = (req, res, next) => {
+  Partner.find({})
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+    .then((result) => { res.send(result); })
+    .catch((err) => handleError(err))
+    .catch((err) => next(err));
+};
+
 module.exports.getPartnerProducts = (req, res, next) => {
   Partner.findById(req.params.partnerID)
     .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
-    .then((partnerData) => fetch(`${partnerData.baseUrl}/tokenize`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        searchReq: ' 3 хлеба гербер',
-      }),
+    .then((partnerData) => fetch(`${partnerData.baseUrl}/products`, {
+      method: 'GET',
+    }))
+    .then(parseResult)
+    .then((result) => { res.send(result); })
+    .catch((err) => handleError(err))
+    .catch((err) => next(err));
+};
+
+module.exports.getPartnerCategories = (req, res, next) => {
+  Partner.findById(req.params.partnerID)
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+    .then((partnerData) => fetch(`${partnerData.baseUrl}/categories`, {
+      method: 'GET',
     }))
     .then(parseResult)
     .then((result) => { res.send(result); })

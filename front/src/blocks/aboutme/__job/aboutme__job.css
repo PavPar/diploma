@@ -1,0 +1,21 @@
+.aboutme__job {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  margin-bottom: 26px;
+}
+
+@media screen and (max-width: 1024px) {
+  .aboutme__job {
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .aboutme__job {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}

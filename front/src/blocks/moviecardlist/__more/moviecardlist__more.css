@@ -1,0 +1,9 @@
+.moviecardlist__more {
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+}

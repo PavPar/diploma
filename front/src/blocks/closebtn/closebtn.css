@@ -1,0 +1,9 @@
+.closebtn {
+  border: none;
+  background: url(../../images/cross.svg) center no-repeat;
+  position: relative;
+  justify-self: end;
+  width: 16px;
+  height: 16px;
+  border-radius: 12px;
+}

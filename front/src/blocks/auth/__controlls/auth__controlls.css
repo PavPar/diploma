@@ -1,0 +1,17 @@
+.auth__controlls {
+  display: grid;
+  gap: 16px;
+  margin-top: auto;
+  width: 100%;
+  grid-template-columns: 2fr 1fr;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+@media screen and (max-width: 600px) {
+  .auth__controlls {
+    grid-template-columns: 2.5fr 1fr;
+    font-size: 12px;
+    line-height: 15px;
+  }
+}

@@ -1,0 +1,7 @@
+.profile__breakline {
+  grid-column: 1/-1;
+  background-color: #e8e8e8;
+  border-width: 0;
+  height: 1px;
+  width: 100%;
+}

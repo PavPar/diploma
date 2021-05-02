@@ -1,0 +1,16 @@
+.popup_type-message{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 36px;
+    box-sizing: border-box;
+    margin-top: 10vh auto;
+}
+
+@media screen and (max-width:535px) {
+    .popup_type-message{
+        max-width: calc(320px - (20px * 2));
+        padding: 50px 18px;
+    }
+}

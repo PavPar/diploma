@@ -1,0 +1,8 @@
+.profile__input {
+  text-align: end;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: inherit;
+  line-height: inherit;
+}

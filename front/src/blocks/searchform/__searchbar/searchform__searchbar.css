@@ -1,0 +1,21 @@
+.searchform__searchbar {
+  display: flex;
+  border: 1px black solid;
+  border-radius: 50px;
+  padding: 7px 7px 7px 15px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 1024px) {
+  .searchform__searchbar {
+    margin-bottom: 38px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .searchform__searchbar {
+    margin-bottom: 45px;
+  }
+}

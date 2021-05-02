@@ -1,0 +1,22 @@
+.popup__button_type_exit {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    transform: rotate(45deg);
+    top: -40px;
+    left: 100%;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: unset;
+    background-image: url(../../../../images/plus.svg);
+    background-size: 40px 40px;
+    border: 0;
+}
+
+@media screen and (max-width:535px) {
+    .popup__button_type_exit  {
+        left: calc(50% - 20px);
+        top: -80px;
+    }
+}

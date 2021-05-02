@@ -1,0 +1,5 @@
+.link-list__marker {
+  height: 1rem;
+  background: url(../../../images/link-marker.svg) no-repeat center;
+  width: 50px;
+}

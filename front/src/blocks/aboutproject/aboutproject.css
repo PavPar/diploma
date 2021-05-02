@@ -1,0 +1,21 @@
+@import url(./__title/aboutproject__title.css);
+@import url(./__process/aboutproject__process.css);
+@import url(./__infoblock/aboutproject__infoblock.css);
+
+.aboutproject {
+  background-color: white;
+  padding-top: 100px;
+  padding-bottom: 110px;
+}
+
+@media screen and (max-width: 1024px) {
+  .aboutproject {
+    padding: 90px 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .aboutproject {
+    padding: 70px 18px;
+  }
+}

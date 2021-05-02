@@ -1,0 +1,27 @@
+@import url(./__avatar/aboutme__avatar.css);
+@import url(./__bio/aboutme__bio.css);
+@import url(./__desc/aboutme__desc.css);
+@import url(./__header/aboutme__header.css);
+@import url(./__info/aboutme__info.css);
+@import url(./__job/aboutme__job.css);
+@import url(./__link/aboutme__link.css);
+@import url(./__list/aboutme__list.css);
+@import url(./__name/aboutme__name.css);
+
+.aboutme {
+  background-color: white;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+@media screen and (max-width: 1024px) {
+  .aboutme {
+    padding: 90px 50px 0 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .aboutme {
+    padding: 70px 14px;
+  }
+}

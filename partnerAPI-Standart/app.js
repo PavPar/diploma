@@ -8,8 +8,6 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const routes = require('./routes/index');
-const authRoute = require('./routes/auth');
-const auth = require('./middlewares/auth');
 const ErrorHandler = require('./utils/errorHandler/ErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 require('dotenv').config({ path: path.join(__dirname, 'envVars.env') });
@@ -27,7 +25,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mainAPI', {
+mongoose.connect('mongodb://localhost:27017/metroDB', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,

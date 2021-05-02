@@ -1,0 +1,10 @@
+.searchform__option {
+  display: flex;
+  padding-left: 40px;
+}
+
+@media screen and (max-width: 600px) {
+  .searchform__option {
+    padding: 0;
+  }
+}

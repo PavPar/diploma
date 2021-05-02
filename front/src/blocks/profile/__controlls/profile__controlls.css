@@ -1,0 +1,5 @@
+.profile__controlls {
+  margin-top: auto;
+  display: grid;
+  gap: 16px;
+}

@@ -1,0 +1,10 @@
+.searchform__breakline {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-width: 95%;
+  background: #aaaaaa;
+  opacity: 0.2;
+  height: 1px;
+  border-width: 0;
+}

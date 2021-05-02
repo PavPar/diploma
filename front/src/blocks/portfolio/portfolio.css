@@ -1,0 +1,19 @@
+@import url(./__header/portfolio__header.css);
+
+.portfolio {
+  background-color: white;
+  padding-bottom: 90px;
+}
+
+@media screen and (max-width: 1024px) {
+  .portfolio {
+    padding: 90px 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .portfolio {
+    padding: 70px 14px;
+  }
+}
+

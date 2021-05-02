@@ -1,0 +1,17 @@
+.header__button {
+  background: none;
+  border: none;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  align-self: center;
+  color: black;
+}
+
+@media screen and (max-width: 600px) {
+  .header__button {
+    font-size: 10px;
+    line-height: 16px;
+  }
+}

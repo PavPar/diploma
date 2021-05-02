@@ -1,0 +1,25 @@
+@import url(./__title/promo__title.css);
+
+.promo {
+  background: #073042 no-repeat center;
+  background-image: url(../../images/pic__COLOR_landing-logo.svg);
+  background-size: 320px;
+  background-position-y: 82px;
+  height: 524px;
+  display: flex;
+}
+
+@media screen and (max-width: 1024px) {
+  .promo {
+    height: 784px;
+    background-position-y: 224px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .promo {
+    height: 570px;
+    background-position-y: 142px;
+    background-size: 248px;
+  }
+}

@@ -1,0 +1,16 @@
+@import url(./__btnmore/moviecardlist__btnmore.css);
+@import url(./__grid/moviecardlist__grid.css);
+@import url(./__more/moviecardlist__more.css);
+
+.moviecardlist {
+  padding-top: 70px;
+  padding-bottom: 80px;
+  min-height: 30vh;
+  position: relative;
+}
+
+@media screen and (max-width: 600px) {
+  .moviecardlist {
+    padding: 47px 10px 82px 10px;
+  }
+}

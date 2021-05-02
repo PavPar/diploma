@@ -1,0 +1,10 @@
+.auth__logo {
+  align-self: start;
+  transition: align-self 0.5s ease;
+}
+
+@media screen and (max-width: 600px) {
+  .auth__logo {
+    align-self: center;
+  }
+}

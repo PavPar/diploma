@@ -1,0 +1,26 @@
+.menubtn {
+  border: none;
+  background: none;
+  position: relative;
+  margin-left: auto;
+  display: none;
+  width:28px;
+  height:23px;
+  display:none;
+  gap:7px;
+  justify-items: space-between;
+  padding: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .menubtn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .menubtn {
+    display: grid;
+  }
+}

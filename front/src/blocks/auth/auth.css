@@ -1,0 +1,28 @@
+@import url(./__btn/auth__btn.css);
+@import url(./__controlls/auth__controlls.css);
+@import url(./__logo/auth__logo.css);
+@import url(./__text/auth__text.css);
+@import url(./__title/auth__title.css);
+
+
+.auth {
+  max-width: 396px;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80vh;
+  max-height: 560px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .auth {
+    margin-top: 56px;
+    padding: 0 30px;
+    max-height: 100vh;
+    height: 90vh;
+  }
+}

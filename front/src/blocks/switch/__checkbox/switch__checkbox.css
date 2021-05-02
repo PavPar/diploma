@@ -1,0 +1,8 @@
+.switch__checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+}
+

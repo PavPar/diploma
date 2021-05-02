@@ -1,0 +1,25 @@
+.page {
+  box-sizing: border-box;
+  margin: auto;
+  font-family: Inter, sans-serif;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page > * {
+  padding: 0 70px;
+}
+
+@media screen and (max-width: 1024px) {
+  .page > * {
+    padding: 0 30px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .page > * {
+    padding: 0 15px;
+  }
+}

@@ -1,0 +1,14 @@
+.navtab__menu {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  max-width: 276px;
+}
+
+@media screen and (max-width: 600px) {
+  .navtab__menu {
+    max-width: 214px;
+  }
+}

@@ -1,0 +1,13 @@
+.navigation__close {
+  position: fixed;
+  border: none;
+  padding: 0;
+  background: center no-repeat;
+  background-image: url("../../../images/menuicon__close.svg");
+  /* background-image: url("./images/menuicon__close.svg"); */
+  width: 22px;
+  height: 22px;
+  top: 26px;
+  right: 27px;
+  background-size: 33px 33px;
+}

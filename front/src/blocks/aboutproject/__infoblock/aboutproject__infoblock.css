@@ -1,0 +1,17 @@
+.aboutproject__infoblock {
+  margin-top: 70px;
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+@media screen and (max-width: 600px) {
+  .aboutproject__infoblock {
+    margin-top: 60px;
+    flex-direction: column;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 56px;
+  }
+}

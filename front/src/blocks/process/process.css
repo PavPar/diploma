@@ -1,0 +1,17 @@
+@import url(./__info/process__info.css);
+@import url(./__title/process__title.css);
+@import url(./__week/process__week.css);
+
+@import url(./__title/_color/process__title_color-gray.css);
+@import url(./__title/_color/process__title_color-green.css);
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+@media screen and (max-width: 600px) {
+  .process {
+    grid-template-columns: 1fr 2fr;
+  }
+}

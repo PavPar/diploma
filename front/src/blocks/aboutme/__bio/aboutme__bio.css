@@ -1,0 +1,25 @@
+.aboutme__bio {
+  margin-top: 66px;
+  display: grid;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  height: 327px;
+  grid-template-areas: "info avatar";
+  gap: 50px;
+}
+
+@media screen and (max-width: 1024px) {
+  .aboutme__bio {
+    height: 307px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .aboutme__bio {
+    margin-top: 60px;
+    gap: 40px;
+    height: unset;
+    grid-template-areas: "avatar" "info";
+    justify-content: center;
+  }
+}

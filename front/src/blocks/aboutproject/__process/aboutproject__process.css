@@ -1,0 +1,15 @@
+.aboutproject__process {
+  margin-top: 110px;
+}
+
+@media screen and (max-width: 1024px) {
+  .aboutproject__process {
+    margin-top: 93px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .aboutproject__process {
+    margin-top: 60px;
+  }
+}

@@ -1,0 +1,7 @@
+.aboutme__info {
+  grid-area: info;
+  max-width: 600px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

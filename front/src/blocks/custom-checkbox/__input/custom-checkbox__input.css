@@ -1,0 +1,18 @@
+.custom-checkbox__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox__input:checked ~ .custom-checkbox__bubble {
+  background-color: #2be080;
+}
+
+
+.custom-checkbox__input:hover ~ .custom-checkbox__bubble {
+  background-color: #2be07f55;
+}

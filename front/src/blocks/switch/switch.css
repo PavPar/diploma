@@ -1,0 +1,16 @@
+@import url(./__bubble/switch__bubble.css);
+@import url(./__checkbox/switch__checkbox.css);
+
+.switch {
+  background: none;
+  border: none;
+  background: white;
+  box-shadow: 0px 4px 4px rgba(50, 50, 71, 0.08),
+    0px 4px 8px rgba(50, 50, 71, 0.06);
+  border-radius: 16px;
+  padding: 2px;
+  width: 36px;
+  height: 20px;
+  display: grid;
+  position: relative;
+}

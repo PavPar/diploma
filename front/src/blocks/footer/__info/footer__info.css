@@ -1,0 +1,14 @@
+.footer__info {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+@media screen and (max-width: 600px) {
+  .footer__info {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+}

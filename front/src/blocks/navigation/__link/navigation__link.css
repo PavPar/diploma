@@ -1,0 +1,19 @@
+.navigation__link {
+  background: none;
+  border: none;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  align-self: center;
+  color: black;
+  padding-bottom: 4px;
+}
+
+@media screen and (max-width: 600px) {
+  .navigation__link {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+  }
+}

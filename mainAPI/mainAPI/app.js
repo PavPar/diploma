@@ -45,8 +45,8 @@ app.use(cors());
 
 app.use(requestLogger);
 
-// app.use(authRoute);
-// app.use(auth);
+app.use(authRoute);
+app.use(auth);
 app.use(routes);
 
 app.use('*', () => {

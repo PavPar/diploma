@@ -1,0 +1,26 @@
+@import url(./__element/link-list__element.css);
+@import url(./__marker/link-list__marker.css);
+
+.link-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  font-size: 30px;
+  line-height: 50px;
+  letter-spacing: -0.04em;
+}
+
+@media screen and (max-width: 1024px) {
+  .link-list {
+    font-size: 28px;
+    line-height: 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .link-list {
+    font-size: 18px;
+    line-height: 28px;
+  }
+}

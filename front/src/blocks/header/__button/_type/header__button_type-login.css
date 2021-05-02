@@ -1,0 +1,14 @@
+.header__button_type-login {
+    color: black;
+    background-color: #2be080;
+    padding: 8px 20px;
+    border-radius: 3px;
+    justify-self: end;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .header__button_type-login {
+      padding: 5px 12px;
+    }
+  }
+  

@@ -1,0 +1,18 @@
+@import url(./__menu/navtab__menu.css);
+@import url(./__link/navtab__link.css);
+
+.navtab {
+  color: white;
+  background-color: black;
+  padding: 25px 0;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+@media screen and (max-width: 600px) {
+  .navtab {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}

@@ -1,0 +1,12 @@
+.aboutme__link:first-child {
+  margin-left: 0;
+}
+
+.aboutme__link {
+  margin-left: 20px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: black;
+  text-decoration: none;
+}

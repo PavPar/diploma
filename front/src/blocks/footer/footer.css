@@ -1,0 +1,18 @@
+@import url(./__link/footer__link.css);
+@import url(./__info/footer__info.css);
+@import url(./__links/footer__links.css);
+@import url(./__title/footer__title.css);
+@import url(./__year/footer__year.css);
+
+.footer {
+  background-color: white;
+  padding-top: 80px;
+  padding-bottom: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  .footer {
+    padding: 79px 10px 10px 10px;
+  }
+}
+

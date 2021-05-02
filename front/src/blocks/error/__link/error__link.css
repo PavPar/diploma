@@ -1,0 +1,16 @@
+.error__link {
+  position: absolute;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #3456f3;
+  background: none;
+  border: none;
+  bottom: -184px;
+}
+
+@media screen and (max-width: 600px) {
+  .error__link {
+    top: 52vh;
+  }
+}

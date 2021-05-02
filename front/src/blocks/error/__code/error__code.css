@@ -1,0 +1,12 @@
+.error__code {
+  font-size: 140px;
+  line-height: 169px;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .error__code {
+    font-size: 80px;
+    line-height: 97px;
+  }
+}

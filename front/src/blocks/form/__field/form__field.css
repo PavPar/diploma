@@ -1,0 +1,6 @@
+.form__field {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-auto-rows: auto;
+}

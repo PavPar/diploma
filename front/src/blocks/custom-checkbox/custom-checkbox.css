@@ -1,0 +1,10 @@
+@import url(./__bubble/custom-checkbox__bubble.css);
+@import url(./__input/custom-checkbox__input.css);
+
+.custom-checkbox {
+  position: relative;
+  background: none;
+  border: none;
+  justify-self: end;
+}
+

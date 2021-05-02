@@ -1,0 +1,39 @@
+@import url(./__close/navigation__close.css);
+@import url(./__link/navigation__link.css);
+@import url(./__links/navigation__links.css);
+@import url(./__links/_decoration/navigation__link_decoration-underline.css);
+
+.navigation {
+    padding-top: 159px;
+    padding-bottom: 98px;
+    position: fixed;
+    right: 0;
+    top:0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    z-index: 3;
+    height: 100vh;
+    width: 68vw;
+    justify-content: space-between;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    box-sizing: border-box;
+    align-items: center;
+  }
+  
+  @media screen and (min-width: 801px) {
+    .navigation {
+      visibility: hidden;
+    }
+  }
+  
+  @media screen and (max-width: 600px) {
+    .navigation {
+      width: 100%;
+      padding-top: 144px;
+      padding-bottom: 40px;
+    }
+  }
+  
