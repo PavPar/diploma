@@ -16,8 +16,8 @@ export default function HeaderNav({ isLoggedIn, ...props }) {
                 <nav className={`header__nav header__nav_adp-menu ${props.mod}`}>
                     <div className="header__menu header__menu_adp-menu">
                         <Link to="/" className="header__button header__element_hidden-lowres">Главная</Link>
-                        <Link to="/movies" className="header__button header__button_decoration-underline">Фильмы</Link>
-                        <Link to="/saved-movies" className="header__button">Сохранённые фильмы</Link>
+                        <Link to="/partners" className="header__button">Магазины</Link>
+                        <Link to="/products" className="header__button header__button_decoration-underline">Продукты</Link>
                     </div>
 
                     <div className="header__menu header__menu_align-right" >

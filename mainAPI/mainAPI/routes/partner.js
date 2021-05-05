@@ -10,6 +10,12 @@ router.get('/:partnerID/products', celebrate({
   }),
 }), partnerController.getPartnerProducts);
 
+router.get('/:partnerID/categories', celebrate({
+  params: Joi.object().keys({
+    partnerID: Joi.string().required().min(2).max(30),
+  }),
+}), partnerController.getPartnerCategories);
+
 router.get('/partners', partnerController.getAllPartners);
 
 module.exports = router;

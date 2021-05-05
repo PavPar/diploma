@@ -1,0 +1,15 @@
+.list__btnmore {
+  border: 1px #e8e8e8 solid;
+  background: none;
+  max-width: 320px;
+  width: 100%;
+  padding: 9px 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .list__btnmore {
+    max-width: 240px;
+  }
+}

@@ -1,0 +1,17 @@
+@import url(./__btnmore/list__btnmore.css);
+@import url(./__grid/list__grid.css);
+@import url(./__more/list__more.css);
+@import url(./__grid/_mod/list__grid_mod-categories.css);
+
+.list {
+  padding-top: 70px;
+  padding-bottom: 80px;
+  min-height: 30vh;
+  position: relative;
+}
+
+@media screen and (max-width: 600px) {
+  .list {
+    padding: 47px 10px 82px 10px;
+  }
+}

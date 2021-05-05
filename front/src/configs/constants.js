@@ -12,7 +12,8 @@ const cardsOnWidth = {
 const localStorageNames = {
     "userMoviesSearch":"userMoviesSearch",
     "userSavedMoviesSearch":"userSavedMoviesSearch",
-    "token":"jwt"
+    "token":"jwt",
+    "selectedPartner":"partnerdata"
 }
 
 const nullReplacerValue =  "неизвестно";

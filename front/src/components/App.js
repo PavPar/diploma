@@ -1,6 +1,8 @@
 import '../App.css';
 import Main from './Main';
 import Movies from './Movies';
+import Products from './Products';
+import Partners from './Partners'
 import SavedMovies from './SavedMovies';
 import Profile from './Profile';
 import Register from './Register';
@@ -14,8 +16,8 @@ import MainApi from '../utils/MainApi'
 import MoviesApi from "../utils/MoviesApi"
 import userContext from './context/UserContext';
 
-import { Route, Switch } from 'react-router-dom'
-import { useEffect, useState } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
 function App() {
   const [userInfo, setUserInfo] = useState({})
 
@@ -189,6 +191,52 @@ function App() {
       })
   }, [isLoggedIn])
 
+  //=================
+  const history = useHistory();
+
+  const [partners, setPartners] = useState([])
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+
+  const [selectedPartnerData, setPartnerData] = useState({})
+
+  useEffect(() => {
+    MainApi.getPartners()
+      .then((partnersList) => {
+        setPartners(partnersList)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+
+  useEffect(() => {
+    let partnerData = {}
+    if (localStorage.getItem(localStorageNames.selectedPartner)) {
+      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
+    }
+    Promise.all([MainApi.getProducts(partnerData._id), MainApi.getCategories(partnerData._id)])
+      .then((data) => {
+        const [products, categories] = data;
+        
+        setProducts(products)
+        setCategories(categories)
+
+        console.log(products)
+        console.log(categories)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [selectedPartnerData])
+
+  function handlePartnerSelect(partnerData) {
+    localStorage.setItem(localStorageNames.selectedPartner, JSON.stringify(partnerData))
+    setPartnerData(partnerData)
+    console.log(partnerData)
+
+    history.push('/')
+  }
 
   return (
     <Switch>
@@ -202,6 +250,20 @@ function App() {
           handleDelete={handleMovieDelete}
           getSavedMovies={getSavedMovies}
           movies={movies}
+        />
+      </ProtectedRoute>
+      <ProtectedRoute path="/partners" redirectTo="/" loggedIn={isLoggedIn}>
+        <Partners
+          partners={partners}
+          handlePartnerSelect={handlePartnerSelect}
+        />
+      </ProtectedRoute>
+      <ProtectedRoute path="/products" redirectTo="/" loggedIn={isLoggedIn}>
+        <Products
+          partners={partners}
+          products={products}
+          handlePartnerSelect={handlePartnerSelect}
+          categories={categories}
         />
       </ProtectedRoute>
       <ProtectedRoute path="/profile" redirectTo="/" loggedIn={isLoggedIn}>

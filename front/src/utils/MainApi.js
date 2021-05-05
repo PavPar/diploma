@@ -68,6 +68,17 @@ class MainApi {
         })
     }
 
+    getPartners(){
+        return this._accessServer("GET","/partners")
+    }
+
+    getProducts(partnerID){
+        return this._accessServer("GET",`/${partnerID}/products`)
+    }
+
+    getCategories(partnerID){
+        return this._accessServer("GET",`/${partnerID}/categories`)
+    }
     saveMovie({
         country,
         director,
