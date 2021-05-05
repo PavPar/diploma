@@ -20,3 +20,11 @@ module.exports.getAllProducts = (req, res, next) => {
     .catch((err) => handleError(err))
     .catch((err) => next(err));
 };
+
+module.exports.getProductByCategory = (req, res, next) => {
+  Product.find({ category_id: req.params.categoryID })
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Подукты не найдены'); })
+    .then((result) => { res.send(result); })
+    .catch((err) => handleError(err))
+    .catch((err) => next(err));
+};

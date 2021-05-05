@@ -79,6 +79,11 @@ class MainApi {
     getCategories(partnerID){
         return this._accessServer("GET",`/${partnerID}/categories`)
     }
+    
+    getProductByCategory(partnerID,categoryID){
+        return this._accessServer("GET",`/${partnerID}/products/${categoryID}`)
+    }
+
     saveMovie({
         country,
         director,

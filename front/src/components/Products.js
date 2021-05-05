@@ -163,6 +163,8 @@ export default function Products(
 
                     return <CategoryCard
                         name={category.name}
+                        handleSelect={handleCategorySelect}
+                        data={category}
                     />
                 })}
             </List>

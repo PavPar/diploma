@@ -238,6 +238,13 @@ function App() {
     history.push('/')
   }
 
+  function getProductByCategory(categoryData){
+    let partnerData = {}
+    if (localStorage.getItem(localStorageNames.selectedPartner)) {
+      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
+    }
+    return MainApi.getProductByCategory(partnerData._id,categoryData.categoryID[0])
+  }
   return (
     <Switch>
       <Route exact path="/">
@@ -264,6 +271,7 @@ function App() {
           products={products}
           handlePartnerSelect={handlePartnerSelect}
           categories={categories}
+          getProductsByCategory={getProductByCategory}
         />
       </ProtectedRoute>
       <ProtectedRoute path="/profile" redirectTo="/" loggedIn={isLoggedIn}>

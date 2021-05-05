@@ -70,3 +70,15 @@ module.exports.getPartnerCategories = (req, res, next) => {
     .catch((err) => handleError(err))
     .catch((err) => next(err));
 };
+
+module.exports.getPartnerProductByCategory = (req,res,next) =>{
+  Partner.findById(req.params.partnerID)
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+    .then((partnerData) => fetch(`${partnerData.baseUrl}/products/${req.params.categoryID}`, {
+      method: 'GET',
+    }))
+    .then(parseResult)
+    .then((result) => { res.send(result); })
+    .catch((err) => handleError(err))
+    .catch((err) => next(err));
+}
