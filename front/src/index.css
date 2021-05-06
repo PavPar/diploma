@@ -134,6 +134,7 @@ input {
   width: 100%;
   border: 1px red solid;
   grid-template-rows: 5fr 1fr 1fr;
+  gap: 15px;
 }
 
 .productcard__thumbnail {
@@ -155,8 +156,23 @@ input {
 }
 
 .productcard__counter {
+  border: none;
+  background: none;
+  width: 3rem;
   justify-self: center;
   align-self: center;
+  text-align: center;
+}
+
+.productcard__counter::-webkit-outer-spin-button,
+.productcard__counter::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.productcard__counter[type=number] {
+  -moz-appearance: textfield;
 }
 
 .productcard__button {
@@ -185,6 +201,13 @@ input {
   border: 1px red solid;
   background-color: red;
   border-radius: 25px;
+}
+
+.productcard__button-type-add{
+  border: 1px green solid;
+  background-color: green;
+  grid-column: 1/-1;
+  width: 100%;
 }
 
 .categorycard{

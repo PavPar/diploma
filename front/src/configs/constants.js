@@ -13,7 +13,8 @@ const localStorageNames = {
     "userMoviesSearch":"userMoviesSearch",
     "userSavedMoviesSearch":"userSavedMoviesSearch",
     "token":"jwt",
-    "selectedPartner":"partnerdata"
+    "selectedPartner":"partnerdata",
+    "products":"shoppingList"
 }
 
 const nullReplacerValue =  "неизвестно";
