@@ -43,7 +43,7 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
                     else {
                         return (
                             <>
-                                <button className="productcard__button productcard__button-type-more" onClick={handleMore}>+</button>
+                                <button className="productcard__button productcard__button-type-less" onClick={handleLess}>-</button>
                                 <input
                                     type="text"
                                     className="productcard__counter"
@@ -54,7 +54,8 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
                                     onBlur={handleChange}
                                     ref={inputRef}
                                 />
-                                <button className="productcard__button productcard__button-type-less" onClick={handleLess}>-</button>
+                                <button className="productcard__button productcard__button-type-more" onClick={handleMore}>+</button>
+
                             </>)
                     }
                 })()}

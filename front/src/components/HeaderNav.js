@@ -18,6 +18,7 @@ export default function HeaderNav({ isLoggedIn, ...props }) {
                         <Link to="/" className="header__button header__element_hidden-lowres">Главная</Link>
                         <Link to="/partners" className="header__button">Магазины</Link>
                         <Link to="/products" className="header__button header__button_decoration-underline">Продукты</Link>
+                        
                     </div>
 
                     <div className="header__menu header__menu_align-right" >

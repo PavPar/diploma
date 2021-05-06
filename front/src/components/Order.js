@@ -16,69 +16,18 @@ import { moviesFilterParameters, cardsOnWidth, localStorageNames } from "../conf
 
 import logo from '../images/logo.svg'
 import err from '../images/err.svg'
-export default function Products(
-    { isLoggedIn,
-        handleSave,
-        handleDelete,
-        movies = [],
-        products = [],
-        categories = [],
-        getProductsByCategory }
-) {
+export default function Order({ handleOrderSubmit }) {
     const inputRef = useRef();
     const [parsedProducts, setParsedProducts] = useState([])
     const [displayMessage, setDisplayMessage] = useState(false);
     const [displayPreLoader, setPreLoader] = useState(false);
     const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
     const [displayProducts, setDisplayProdcuts] = useState([])
-    const [category, setCategory] = useState({});
-
-    const { width } = useWindowDimensions();
-
-    function nonShortFilmFunction(movie) {
-        return movie.duration > moviesFilterParameters.movieLengthThreshold;
-    }
-
+    const [order, setOrder] = useState(getOrderFromLocalStorage());
+    
+    
     function handleSubmit({ isShortFilm }) {
         try {
-            const optionalFiltersFunct = []
-            if (!isShortFilm) {
-                optionalFiltersFunct.push(nonShortFilmFunction)
-            }
-
-            if (!inputRef.current.validity.valid) {
-                setPopupMessage(movieMSG.noRequestVal)
-                setAuthStatus(false)
-                setStatusPopupOpen(true)
-                console.log("err")
-                return;
-            }
-            setPreLoader(true)
-            setDisplayProdcuts([])
-
-            const searchReq = inputRef.current.value;
-
-            const data = movies.filter(movie => {
-                let isOk = false;
-                const movieName = movie.nameRU || movie.nameEN;
-                if (movieName.toUpperCase().includes(searchReq.toUpperCase())) {
-                    isOk = true;
-                    optionalFiltersFunct.forEach(filterFunc => {
-                        isOk = filterFunc(movie)
-                    });
-                }
-                return isOk
-
-            })
-
-            if (data.length === 0) {
-                setDisplayMessage(true)
-            } else {
-                setDisplayMessage(false)
-            }
-            localStorage.setItem(localStorageNames.userMoviesSearch, JSON.stringify(data))
-            setDisplayProdcuts(getMoreMovies(data))
-            setParsedProducts(data)
         }
         catch {
             console.log(err)
@@ -91,22 +40,6 @@ export default function Products(
         }
     }
 
-    function getStep(width) {
-        const step = Object.keys(cardsOnWidth).filter((x) => x < width).sort((a, b) => b - a)[0];//magic
-        return cardsOnWidth[step]
-    }
-
-    function getMoreMovies(movies) {
-        return movies.splice(0, getStep(width))
-    }
-
-    const [showMoreBtn, setShowMoreBtn] = useState(false)
-
-    useEffect(() => {
-        setShowMoreBtn(parsedProducts.length > 0)
-    }, [parsedProducts.length])
-
-
     const [StatusPopupOpen, setStatusPopupOpen] = React.useState(false);
     const [isAuthOk, setAuthStatus] = React.useState(false);
 
@@ -114,7 +47,6 @@ export default function Products(
         setStatusPopupOpen(false);
     }
 
-    const [order, setOrder] = useState(getOrderFromLocalStorage());
 
     function getOrderFromLocalStorage() {
         if (!localStorage.getItem(localStorageNames.products)) {
@@ -124,19 +56,6 @@ export default function Products(
             return JSON.parse(localStorage.getItem(localStorageNames.products))
         }
     }
-
-    function handleCategorySelect(categoryData) {
-        getProductsByCategory(categoryData)
-            .then((products) => {
-                console.log(products)
-                setDisplayProdcuts(getMoreMovies(products))
-                setParsedProducts(products)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
-
 
     function addToOrder(item) {
         const orderArr = order
@@ -151,7 +70,6 @@ export default function Products(
         localStorage.setItem(localStorageNames.products, JSON.stringify(orderArr))
         console.log(order)
     }
-
 
     function removeFromOrder(item) {
         const orderArr = order
@@ -190,37 +108,18 @@ export default function Products(
             <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
             <List
                 isMoreBtnVisible={false}
-                handleMore={() => {
-                    setDisplayProdcuts(displayProducts.concat(getMoreMovies(parsedProducts)))
-                }}
-                mod="list__grid_mod-categories"
+                handleMore={() => {}}
             >
                 <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
-                {categories.map((category) => {
-
-                    return <CategoryCard
-                        name={category.name}
-                        handleSelect={handleCategorySelect}
-                        data={category}
-                    />
-                })}
-            </List>
-            <List
-                isMoreBtnVisible={showMoreBtn}
-                handleMore={() => {
-                    setDisplayProdcuts(displayProducts.concat(getMoreMovies(parsedProducts)))
-                }}
-            >
-                <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
-                <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
-                {displayProducts.map((product) => {
+                {order.map(({data,count}) => {
+                    let product = data
                     return <ProductCard
                         key={product._id}
                         data={product}
                         image={product.images[0]}
                         name={product.name}
-                        counter={getItemCount(product)}
+                        counter={count}
                         handleItemAdd={handleItemSelect}
                     />
                 })}

@@ -9,6 +9,7 @@ import Register from './Register';
 import Login from './Login'
 import ErrorPage from './ErrorPage.js'
 import ProtectedRoute from './ProtectedRoute'
+import Order from './Order'
 
 import { localStorageNames } from '../configs/constants';
 
@@ -267,6 +268,15 @@ function App() {
       </ProtectedRoute>
       <ProtectedRoute path="/products" redirectTo="/" loggedIn={isLoggedIn}>
         <Products
+          partners={partners}
+          products={products}
+          handlePartnerSelect={handlePartnerSelect}
+          categories={categories}
+          getProductsByCategory={getProductByCategory}
+        />
+      </ProtectedRoute>
+      <ProtectedRoute path="/order" redirectTo="/" loggedIn={isLoggedIn}>
+        <Order
           partners={partners}
           products={products}
           handlePartnerSelect={handlePartnerSelect}
