@@ -14,7 +14,6 @@ import useWindowDimensions from '../utils/useWindowDimensions'
 import { movieMSG } from '../configs/messages';
 import { moviesFilterParameters, cardsOnWidth, localStorageNames } from "../configs/constants";
 
-import logo from '../images/logo.svg'
 import err from '../images/err.svg'
 export default function Products(
     { isLoggedIn,
@@ -148,6 +147,7 @@ export default function Products(
         }
         setOrder(orderArr);
         console.log(order)
+        //TODO - Move to file 
         localStorage.setItem(localStorageNames.products, JSON.stringify(orderArr))
         console.log(order)
     }
@@ -184,9 +184,6 @@ export default function Products(
 
     return (
         <>
-            <Header src={logo} menu={true}>
-                <HeaderNav isLoggedIn={true} />
-            </Header>
             <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
             <List
                 isMoreBtnVisible={false}
@@ -225,7 +222,6 @@ export default function Products(
                     />
                 })}
             </List>
-            <Footer></Footer>
             <InfoTooltip
                 onClose={closeAllPopups}
                 isOpen={StatusPopupOpen}

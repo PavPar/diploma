@@ -1,32 +1,25 @@
 import React, { useEffect } from 'react'
-
-import Header from './Header'
-import Footer from './Footer';
 import SearchForm from './SearchFrom';
 import List from './List';
-import HeaderNav from './HeaderNav'
+
 import InfoTooltip from './InfoTooltip'
 import ProductCard from './ProductCard'
-import CategoryCard from './CategoryCard'
+
 
 import { useRef, useState } from 'react';
-import useWindowDimensions from '../utils/useWindowDimensions'
 import { movieMSG } from '../configs/messages';
-import { moviesFilterParameters, cardsOnWidth, localStorageNames } from "../configs/constants";
+import { localStorageNames } from "../configs/constants";
 
 import logo from '../images/logo.svg'
 import err from '../images/err.svg'
-export default function Order({ handleOrderSubmit }) {
+export default function Bill({ handleOrderSubmit }) {
     const inputRef = useRef();
-    const [parsedProducts, setParsedProducts] = useState([])
     const [displayMessage, setDisplayMessage] = useState(false);
     const [displayPreLoader, setPreLoader] = useState(false);
     const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
-    const [displayProducts, setDisplayProdcuts] = useState([])
     const [order, setOrder] = useState(getOrderFromLocalStorage());
-    
-    
-    function handleSubmit({ isShortFilm }) {
+        
+    function handleSubmit() {
         try {
         }
         catch {
@@ -102,9 +95,6 @@ export default function Order({ handleOrderSubmit }) {
 
     return (
         <>
-            <Header src={logo} menu={true}>
-                <HeaderNav isLoggedIn={true} />
-            </Header>
             <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
             <List
                 isMoreBtnVisible={false}
@@ -124,7 +114,6 @@ export default function Order({ handleOrderSubmit }) {
                     />
                 })}
             </List>
-            <Footer></Footer>
             <InfoTooltip
                 onClose={closeAllPopups}
                 isOpen={StatusPopupOpen}

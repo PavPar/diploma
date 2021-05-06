@@ -230,3 +230,10 @@ input {
 .categorycard__name{
   font-size: 25px;
 }
+
+.steps{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: auto;
+  justify-items: center;
+}

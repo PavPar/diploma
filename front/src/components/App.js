@@ -9,13 +9,19 @@ import Register from './Register';
 import Login from './Login'
 import ErrorPage from './ErrorPage.js'
 import ProtectedRoute from './ProtectedRoute'
-import Order from './Order'
+import Bill from './Bill'
+import Header from './Header';
+import HeaderNav from './HeaderNav'
+import Footer from './Footer';
+import Steps from './Steps';
 
 import { localStorageNames } from '../configs/constants';
 
 import MainApi from '../utils/MainApi'
 import MoviesApi from "../utils/MoviesApi"
 import userContext from './context/UserContext';
+
+import logo from '../images/logo.svg'
 
 import { Route, Switch, useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react';
@@ -219,7 +225,7 @@ function App() {
     Promise.all([MainApi.getProducts(partnerData._id), MainApi.getCategories(partnerData._id)])
       .then((data) => {
         const [products, categories] = data;
-        
+
         setProducts(products)
         setCategories(categories)
 
@@ -239,12 +245,12 @@ function App() {
     history.push('/')
   }
 
-  function getProductByCategory(categoryData){
+  function getProductByCategory(categoryData) {
     let partnerData = {}
     if (localStorage.getItem(localStorageNames.selectedPartner)) {
       partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
     }
-    return MainApi.getProductByCategory(partnerData._id,categoryData.categoryID[0])
+    return MainApi.getProductByCategory(partnerData._id, categoryData.categoryID[0])
   }
   return (
     <Switch>
@@ -266,23 +272,40 @@ function App() {
           handlePartnerSelect={handlePartnerSelect}
         />
       </ProtectedRoute>
-      <ProtectedRoute path="/products" redirectTo="/" loggedIn={isLoggedIn}>
-        <Products
-          partners={partners}
-          products={products}
-          handlePartnerSelect={handlePartnerSelect}
-          categories={categories}
-          getProductsByCategory={getProductByCategory}
-        />
-      </ProtectedRoute>
       <ProtectedRoute path="/order" redirectTo="/" loggedIn={isLoggedIn}>
-        <Order
-          partners={partners}
-          products={products}
-          handlePartnerSelect={handlePartnerSelect}
-          categories={categories}
-          getProductsByCategory={getProductByCategory}
-        />
+        <Header src={logo} menu={true}>
+          <HeaderNav isLoggedIn={true} />
+        </Header>
+        <Steps />
+        <Switch>
+          <Route path="/order/partner">
+            <Partners
+              partners={partners}
+              handlePartnerSelect={handlePartnerSelect}
+            />
+          </Route>
+          <Route path="/order/products">
+          <Products
+            partners={partners}
+            products={products}
+            handlePartnerSelect={handlePartnerSelect}
+            categories={categories}
+            getProductsByCategory={getProductByCategory}
+          />
+          </Route>
+          <Route path="/order/bill">
+          <Bill
+            partners={partners}
+            products={products}
+            handlePartnerSelect={handlePartnerSelect}
+            categories={categories}
+            getProductsByCategory={getProductByCategory}
+          />
+          </Route>
+          
+          
+        </Switch>
+        <Footer />
       </ProtectedRoute>
       <ProtectedRoute path="/profile" redirectTo="/" loggedIn={isLoggedIn}>
         <userContext.Provider value={userInfo}>

@@ -31,6 +31,7 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
             handleItemAdd(data, itemCounter)
         }
     }, [itemCounter])
+    
     return (
         <div className="productcard">
             <img className="productcard__thumbnail" src={image} alt={name}></img>
