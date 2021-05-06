@@ -21,7 +21,9 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
 
     function handleChange() {
         setItemCounter(inputRef.current.value)
-        console.log(inputRef.current)
+        if(inputRef.current.value == 0){
+            handleItemAdd(data,0)
+        }
     }
 
     useEffect(() => {
