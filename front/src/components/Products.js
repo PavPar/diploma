@@ -127,7 +127,6 @@ export default function Products(
     function handleCategorySelect(categoryData) {
         getProductsByCategory(categoryData)
             .then((products) => {
-                console.log(products)
                 setDisplayProdcuts(getMoreMovies(products))
                 setParsedProducts(products)
             })
@@ -149,7 +148,6 @@ export default function Products(
         console.log(order)
         //TODO - Move to file 
         localStorage.setItem(localStorageNames.products, JSON.stringify(orderArr))
-        console.log(order)
     }
 
 
@@ -176,7 +174,8 @@ export default function Products(
 
     function getItemCount(product) {
         const index = order.findIndex(orderItem => orderItem.data._id === product._id)
-        if (index > 0) {
+        console.log(index, product)
+        if (index >= 0) {
             return order[index].count
         }
         return 0

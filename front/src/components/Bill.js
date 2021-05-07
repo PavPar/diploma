@@ -18,19 +18,26 @@ export default function Bill({ handleOrderSubmit }) {
     const [displayPreLoader, setPreLoader] = useState(false);
     const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
     const [order, setOrder] = useState(getOrderFromLocalStorage());
-        
+
     function handleSubmit() {
-        try {
-        }
-        catch {
-            console.log(err)
-            setAuthStatus(false)
-            setPopupMessage(movieMSG.unknownErr)
-            setStatusPopupOpen(true)
-        }
-        finally {
-            setPreLoader(false)
-        }
+        const orderArr = order.map(product => { return { id: product.data.id, count: product.count } })
+        handleOrderSubmit(orderArr)
+            .then(() => {
+                setAuthStatus(true)
+                setPopupMessage("Заказ оформлен")
+                setStatusPopupOpen(true)
+                setOrder([])
+                localStorage.removeItem(localStorageNames.products)
+            })
+            .catch((err) => {
+                console.log(err)
+                setAuthStatus(false)
+                setPopupMessage(movieMSG.unknownErr)
+                setStatusPopupOpen(true)
+            })
+            .finally(() => {
+                setPreLoader(false)
+            })
     }
 
     const [StatusPopupOpen, setStatusPopupOpen] = React.useState(false);
@@ -87,7 +94,7 @@ export default function Bill({ handleOrderSubmit }) {
 
     function getItemCount(product) {
         const index = order.findIndex(orderItem => orderItem.data._id === product._id)
-        if (index > 0) {
+        if (index >= 0) {
             return order[index].count
         }
         return 0
@@ -95,14 +102,15 @@ export default function Bill({ handleOrderSubmit }) {
 
     return (
         <>
-            <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
+            <SearchForm inputRef={inputRef}></SearchForm>
+            <button onClick={handleSubmit}>Подтвердить заказ</button>
             <List
                 isMoreBtnVisible={false}
-                handleMore={() => {}}
+                handleMore={() => { }}
             >
                 <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
-                {order.map(({data,count}) => {
+                {order.map(({ data, count }) => {
                     let product = data
                     return <ProductCard
                         key={product._id}

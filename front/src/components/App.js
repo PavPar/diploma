@@ -242,7 +242,7 @@ function App() {
     setPartnerData(partnerData)
     console.log(partnerData)
 
-    history.push('/')
+    history.push('/order/products')
   }
 
   function getProductByCategory(categoryData) {
@@ -252,6 +252,12 @@ function App() {
     }
     return MainApi.getProductByCategory(partnerData._id, categoryData.categoryID[0])
   }
+
+  function handleOrderSubmit(order) {
+    console.log(selectedPartnerData)
+    return MainApi.sendOrder(selectedPartnerData._id,order)
+  }
+  
   return (
     <Switch>
       <Route exact path="/">
@@ -285,25 +291,26 @@ function App() {
             />
           </Route>
           <Route path="/order/products">
-          <Products
-            partners={partners}
-            products={products}
-            handlePartnerSelect={handlePartnerSelect}
-            categories={categories}
-            getProductsByCategory={getProductByCategory}
-          />
+            <Products
+              partners={partners}
+              products={products}
+              handlePartnerSelect={handlePartnerSelect}
+              categories={categories}
+              getProductsByCategory={getProductByCategory}
+            />
           </Route>
           <Route path="/order/bill">
-          <Bill
-            partners={partners}
-            products={products}
-            handlePartnerSelect={handlePartnerSelect}
-            categories={categories}
-            getProductsByCategory={getProductByCategory}
-          />
+            <Bill
+              partners={partners}
+              products={products}
+              handlePartnerSelect={handlePartnerSelect}
+              categories={categories}
+              getProductsByCategory={getProductByCategory}
+              handleOrderSubmit={handleOrderSubmit}
+            />
           </Route>
-          
-          
+
+
         </Switch>
         <Footer />
       </ProtectedRoute>

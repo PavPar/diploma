@@ -68,20 +68,24 @@ class MainApi {
         })
     }
 
-    getPartners(){
-        return this._accessServer("GET","/partners")
+    getPartners() {
+        return this._accessServer("GET", "/partners")
     }
 
-    getProducts(partnerID){
-        return this._accessServer("GET",`/${partnerID}/products`)
+    getProducts(partnerID) {
+        return this._accessServer("GET", `/${partnerID}/products`)
     }
 
-    getCategories(partnerID){
-        return this._accessServer("GET",`/${partnerID}/categories`)
+    getCategories(partnerID) {
+        return this._accessServer("GET", `/${partnerID}/categories`)
     }
-    
-    getProductByCategory(partnerID,categoryID){
-        return this._accessServer("GET",`/${partnerID}/products/${categoryID}`)
+
+    getProductByCategory(partnerID, categoryID) {
+        return this._accessServer("GET", `/${partnerID}/products/${categoryID}`)
+    }
+
+    sendOrder(partnerID, order) {
+        return this._sendDataToServer("POST", `/${partnerID}/order/`, {order})
     }
 
     saveMovie({
@@ -131,7 +135,7 @@ class MainApi {
         this._options.headers.authorization = `Bearer ${localStorage.getItem('jwt')}`
     }
 
-    setToken(token){
+    setToken(token) {
         this._options.headers.authorization = `Bearer ${token}`
     }
 }
