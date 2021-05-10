@@ -123,6 +123,11 @@ class MainApi {
         return this._sendDataToServer("DELETE", "/movies/" + movieID)
     }
 
+    tokenizatorSearch(partnerID,searchReq){
+        console.log(partnerID,searchReq)
+        return this._sendDataToServer("POST","/tokenize",{partnerID,searchReq})
+    }
+
     //Проверка токена
     checkToken(token) {
         return this._accessServer("GET", "/users/me", {

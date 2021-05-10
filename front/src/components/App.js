@@ -217,6 +217,10 @@ function App() {
       })
   }, [])
 
+  function handleTokenizatorSearch(searchReq){
+    return MainApi.tokenizatorSearch(selectedPartnerData._id,searchReq)
+  }
+
   useEffect(() => {
     let partnerData = {}
     if (localStorage.getItem(localStorageNames.selectedPartner)) {
@@ -263,7 +267,7 @@ function App() {
       <Route exact path="/">
         <Main isLoggedIn={isLoggedIn}></Main>
       </Route>
-      <ProtectedRoute path="/movies" redirectTo="/" loggedIn={isLoggedIn}>
+      <ProtectedRoute path="/movies" redirectTo="/" controlState={isLoggedIn}>
         <Movies
           isLoggedIn={isLoggedIn}
           handleSave={handleMovieSave}
@@ -272,13 +276,13 @@ function App() {
           movies={movies}
         />
       </ProtectedRoute>
-      <ProtectedRoute path="/partners" redirectTo="/" loggedIn={isLoggedIn}>
+      <ProtectedRoute path="/partners" redirectTo="/" controlState={isLoggedIn}>
         <Partners
           partners={partners}
           handlePartnerSelect={handlePartnerSelect}
         />
       </ProtectedRoute>
-      <ProtectedRoute path="/order" redirectTo="/" loggedIn={isLoggedIn}>
+      <ProtectedRoute path="/order" redirectTo="/" controlState={isLoggedIn}>
         <Header src={logo} menu={true}>
           <HeaderNav isLoggedIn={true} />
         </Header>
@@ -290,16 +294,17 @@ function App() {
               handlePartnerSelect={handlePartnerSelect}
             />
           </Route>
-          <Route path="/order/products">
+          <ProtectedRoute redirectTo="/order/partner" controlState={selectedPartnerData} path="/order/products">
             <Products
               partners={partners}
               products={products}
               handlePartnerSelect={handlePartnerSelect}
               categories={categories}
               getProductsByCategory={getProductByCategory}
+              handleTokenizatorSearch={handleTokenizatorSearch}
             />
-          </Route>
-          <Route path="/order/bill">
+          </ProtectedRoute>
+          <ProtectedRoute redirectTo="/order/partner" controlState={selectedPartnerData} path="/order/bill">
             <Bill
               partners={partners}
               products={products}
@@ -308,9 +313,7 @@ function App() {
               getProductsByCategory={getProductByCategory}
               handleOrderSubmit={handleOrderSubmit}
             />
-          </Route>
-
-
+          </ProtectedRoute>
         </Switch>
         <Footer />
       </ProtectedRoute>

@@ -22,7 +22,8 @@ export default function Products(
         movies = [],
         products = [],
         categories = [],
-        getProductsByCategory }
+        getProductsByCategory,
+        handleTokenizatorSearch }
 ) {
     const inputRef = useRef();
     const [parsedProducts, setParsedProducts] = useState([])
@@ -30,64 +31,30 @@ export default function Products(
     const [displayPreLoader, setPreLoader] = useState(false);
     const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
     const [displayProducts, setDisplayProdcuts] = useState([])
-    const [category, setCategory] = useState({});
-
+    const [displayCategories, setDisplayCategory] = useState(categories);
+    const [searchResult, setSearchResult] = useState([])
+    const [displayDetectedData, setDetectedData] = useState([])
     const { width } = useWindowDimensions();
 
-    function nonShortFilmFunction(movie) {
-        return movie.duration > moviesFilterParameters.movieLengthThreshold;
-    }
+    function handleSubmit() {
+        if (!inputRef.current.validity.valid) {
+            setPopupMessage(movieMSG.noRequestVal)
+            setAuthStatus(false)
+            setStatusPopupOpen(true)
+            console.log("err")
+            return;
+        }
 
-    function handleSubmit({ isShortFilm }) {
-        try {
-            const optionalFiltersFunct = []
-            if (!isShortFilm) {
-                optionalFiltersFunct.push(nonShortFilmFunction)
-            }
-
-            if (!inputRef.current.validity.valid) {
-                setPopupMessage(movieMSG.noRequestVal)
+        handleTokenizatorSearch(inputRef.current.value)
+            .then(searchData => {
+                console.log(searchData)
+                setSearchResult(structSearchData(searchData))
+            })
+            .catch(err => {
+                setPopupMessage(err.msg)
                 setAuthStatus(false)
                 setStatusPopupOpen(true)
-                console.log("err")
-                return;
-            }
-            setPreLoader(true)
-            setDisplayProdcuts([])
-
-            const searchReq = inputRef.current.value;
-
-            const data = movies.filter(movie => {
-                let isOk = false;
-                const movieName = movie.nameRU || movie.nameEN;
-                if (movieName.toUpperCase().includes(searchReq.toUpperCase())) {
-                    isOk = true;
-                    optionalFiltersFunct.forEach(filterFunc => {
-                        isOk = filterFunc(movie)
-                    });
-                }
-                return isOk
-
             })
-
-            if (data.length === 0) {
-                setDisplayMessage(true)
-            } else {
-                setDisplayMessage(false)
-            }
-            localStorage.setItem(localStorageNames.userMoviesSearch, JSON.stringify(data))
-            setDisplayProdcuts(getMoreMovies(data))
-            setParsedProducts(data)
-        }
-        catch {
-            console.log(err)
-            setAuthStatus(false)
-            setPopupMessage(movieMSG.unknownErr)
-            setStatusPopupOpen(true)
-        }
-        finally {
-            setPreLoader(false)
-        }
     }
 
     function getStep(width) {
@@ -127,6 +94,9 @@ export default function Products(
     function handleCategorySelect(categoryData) {
         getProductsByCategory(categoryData)
             .then((products) => {
+                if (searchResult) {
+                    products = sortProductsBySearchRes(products, categoryData)
+                }
                 setDisplayProdcuts(getMoreMovies(products))
                 setParsedProducts(products)
             })
@@ -135,6 +105,47 @@ export default function Products(
             })
     }
 
+    function getVendorsFromSearchRes(categoryData) {
+        return categoryData.reduce((acc, currVal) => {
+            if (currVal.vendor) {
+                acc.push(currVal.vendor)
+            }
+            return acc
+        }, [])
+    }
+
+
+    function getAmountFromSearchRes(categoryData) {
+        return categoryData.reduce((acc, currVal) => {
+            if (currVal.vendor) {
+                acc[currVal.vendor.toUpperCase()] = currVal.amount
+            }
+            return acc
+        }, {})
+    }
+
+    function sortProductsBySearchRes(data, categoryData) {
+        const vendors = getVendorsFromSearchRes(searchResult[categoryData.name])
+        const amount = getAmountFromSearchRes(searchResult[categoryData.name])
+        const res = []
+        console.log(amount)
+        //Move items with known vendor first
+        data = data.filter(product => {
+            if (vendors.find(vendor => vendor.toUpperCase() === product.manufacturer.name.toUpperCase())) {
+                if (amount) {
+                    product.illusiveCounter = amount[product.manufacturer.name.toUpperCase()];
+                    console.log(product)
+                }
+                res.push(product)
+                return false
+            } else {
+                return true
+            }
+        })
+        res.sort()
+        console.log(res)
+        return res.concat(data)
+    }
 
     function addToOrder(item) {
         const orderArr = order
@@ -173,17 +184,46 @@ export default function Products(
 
 
     function getItemCount(product) {
+        //Restore from local storage
         const index = order.findIndex(orderItem => orderItem.data._id === product._id)
-        console.log(index, product)
+        // console.log(index, product)
         if (index >= 0) {
             return order[index].count
         }
         return 0
     }
 
+    function structSearchData(data) {
+        const res = {}
+        data.forEach(category => {
+            const categoryName = Object.keys(category)
+            const categoryItemsData = Object.values(category)[0]
+            res[categoryName] = categoryItemsData
+        });
+        return res
+    }
+
+    useEffect(() => {
+        const searchCategories = Object.keys(searchResult)
+        setDetectedData(Object.values(searchResult))
+        const filtererdCategories = categories.filter(categoryData => searchCategories.find(searchCategoryName => searchCategoryName.toUpperCase() === categoryData.name.toUpperCase()))
+        console.log(categories, filtererdCategories);
+        setDisplayCategory(filtererdCategories)
+    }, [searchResult])
+
     return (
         <>
             <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
+            <div className="detecteddatalist">{displayDetectedData.map(items => {
+                return items.map(item => (<div className="detecteddata">
+                    <p className="detecteddata__venodor">{item.vendor || "..."}</p>
+                    <p className="detecteddata__amount">{item.amount || "..."}</p>
+                    <p className="detecteddata__category">{item.category || "..."}</p>
+                    <p className="detecteddata__unit">{item.unit || "..."}</p>
+                </div>))
+                console.log(displayDetectedData)
+
+            })}</div>
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => {
@@ -193,8 +233,7 @@ export default function Products(
             >
                 <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
-                {categories.map((category) => {
-
+                {displayCategories.map((category) => {
                     return <CategoryCard
                         name={category.name}
                         handleSelect={handleCategorySelect}
@@ -217,6 +256,7 @@ export default function Products(
                         image={product.images[0]}
                         name={product.name}
                         counter={getItemCount(product)}
+                        illusiveCounter={product.illusiveCounter || -1}
                         handleItemAdd={handleItemSelect}
                     />
                 })}

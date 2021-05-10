@@ -82,3 +82,12 @@ module.exports.getPartnerProductByCategory = (req,res,next) =>{
     .catch((err) => handleError(err))
     .catch((err) => next(err));
 }
+
+module.exports.getPartnerCategoriesNoResp = (partnerID) => {
+  return Partner.findById(partnerID)
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+    .then((partnerData) => fetch(`${partnerData.baseUrl}/categories`, {
+      method: 'GET',
+    }))
+    .then(parseResult)
+};

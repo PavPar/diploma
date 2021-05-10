@@ -245,3 +245,17 @@ input {
   border-radius: 10px;
   padding: 10px;
 }
+
+.detecteddata{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  border:1px red solid;
+}
+
+
+.detecteddatalist{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px
+}

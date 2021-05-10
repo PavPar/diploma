@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, ...props }) {
+export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, illusiveCounter=0,...props }) {
     const inputRef = useRef()
 
     const [itemCounter, setItemCounter] = useState(counter)
     function handleAdd() {
-        setItemCounter(1)
+        setItemCounter(illusiveCounter)
     }
 
     function handleMore() {
@@ -39,7 +39,7 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
             <div className="productcard__buttonblock">
                 {(() => {
                     if (itemCounter <= 0) {
-                        return (<button className="productcard__button productcard__button-type-add" onClick={handleAdd}>+</button>)
+                        return (<button style={illusiveCounter>0?{backgroundColor:"yellow"}:{}} className="productcard__button productcard__button-type-add" onClick={handleAdd}>+</button>)
                     }
                     else {
                         return (

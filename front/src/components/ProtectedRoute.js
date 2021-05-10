@@ -8,7 +8,7 @@ const ProtectedRoute = ({ component: Component, children, ...props }) => {
         <Route exact path={props.path}>
             {
                 () => {
-                    if (props.loggedIn) {
+                    if (props.controlState) {
                         return children;
                     }
                     else {
