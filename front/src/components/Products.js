@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react'
 
-import Header from './Header'
-import Footer from './Footer';
 import SearchForm from './SearchFrom';
 import List from './List';
-import HeaderNav from './HeaderNav'
 import InfoTooltip from './InfoTooltip'
 import ProductCard from './ProductCard'
 import CategoryCard from './CategoryCard'
@@ -12,34 +9,38 @@ import CategoryCard from './CategoryCard'
 import { useRef, useState } from 'react';
 import useWindowDimensions from '../utils/useWindowDimensions'
 import { movieMSG } from '../configs/messages';
-import { moviesFilterParameters, cardsOnWidth, localStorageNames } from "../configs/constants";
+import { cardsOnWidth, localStorageNames } from "../configs/constants";
 
-import err from '../images/err.svg'
-export default function Products(
-    { isLoggedIn,
-        handleSave,
-        handleDelete,
-        movies = [],
-        products = [],
-        categories = [],
-        getProductsByCategory,
-        handleTokenizatorSearch }
-) {
+export default function Products({ categories = [],getProductsByCategory,handleTokenizatorSearch }) {
     const inputRef = useRef();
-    const [parsedProducts, setParsedProducts] = useState([])
-    const [displayMessage, setDisplayMessage] = useState(false);
-    const [displayPreLoader, setPreLoader] = useState(false);
-    const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
-    const [displayProducts, setDisplayProdcuts] = useState([])
-    const [displayCategories, setDisplayCategory] = useState(categories);
-    const [searchResult, setSearchResult] = useState([])
-    const [displayDetectedData, setDetectedData] = useState([])
+
+    const [parsedProducts, setParsedProducts] = useState([]) // Все продукты полученные из запросы 
+    const [order, setOrder] = useState(getOrderFromLocalStorage());//Заказ пользователя
+
+    const [displayProducts, setDisplayProdcuts] = useState([]) // Все продукты отображаемые на экран 
+    const [displayProductsPreLoader, setProductsPreloader] = useState(false); // Отображение загрузчика
+    const [displayProductsMessage, setProdcutsDisplayMessage] = useState(false); // Отображение сообщения о не найденых
+
+    const [displayCategories, setDisplayCategory] = useState(categories);// Отображаемые категории
+    const [displayCategoriesPreLoader, setCategoriesPreloader] = useState(false); // Отображение загрузчика
+    const [displayCategoriesMessage, setCategoriesDisplayMessage] = useState(false); // Отображение сообщения о не найденых
+
+    const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)//Отображение текста popup
+    const [StatusPopupOpen, setStatusPopupOpen] = React.useState(false);//Переключение отображения popup
+    const [isPopupStatusOk, setPopupStatus] = React.useState(false);//Изменение значка popup в зависимости от состояния запроса 
+
+    const [searchResult, setSearchResult] = useState([])// Результаты поиска 
+    const [displayDetectedData, setDetectedData] = useState([])// Отображаемые результаты поиска (что распозналось) 
+
+    const [showProductsMoreBtn, setShowProductsMoreBtn] = useState(false)//Управление видимостью кнопки больше
+
     const { width } = useWindowDimensions();
 
+    //Выполнить поиск
     function handleSubmit() {
         if (!inputRef.current.validity.valid) {
             setPopupMessage(movieMSG.noRequestVal)
-            setAuthStatus(false)
+            setPopupStatus(false)
             setStatusPopupOpen(true)
             console.log("err")
             return;
@@ -49,39 +50,34 @@ export default function Products(
             .then(searchData => {
                 console.log(searchData)
                 setSearchResult(structSearchData(searchData))
+                setDisplayCategory([])
+                setDisplayProdcuts([])
             })
             .catch(err => {
                 setPopupMessage(err.msg)
-                setAuthStatus(false)
+                setPopupStatus(false)
                 setStatusPopupOpen(true)
             })
     }
 
+    //Определение кол-ва карточек отображаемых в списке
     function getStep(width) {
         const step = Object.keys(cardsOnWidth).filter((x) => x < width).sort((a, b) => b - a)[0];//magic
         return cardsOnWidth[step]
     }
 
-    function getMoreMovies(movies) {
-        return movies.splice(0, getStep(width))
+    //Получить больше предметов для отображения
+    function getMoreItems(items) {
+        return items.splice(0, getStep(width))
     }
 
-    const [showMoreBtn, setShowMoreBtn] = useState(false)
 
-    useEffect(() => {
-        setShowMoreBtn(parsedProducts.length > 0)
-    }, [parsedProducts.length])
-
-
-    const [StatusPopupOpen, setStatusPopupOpen] = React.useState(false);
-    const [isAuthOk, setAuthStatus] = React.useState(false);
-
+    //Закрыть все попапы
     function closeAllPopups() {
         setStatusPopupOpen(false);
     }
 
-    const [order, setOrder] = useState(getOrderFromLocalStorage());
-
+    //Получить заказ из хранилища данных
     function getOrderFromLocalStorage() {
         if (!localStorage.getItem(localStorageNames.products)) {
             localStorage.setItem(localStorageNames.products, JSON.stringify([]))
@@ -91,20 +87,21 @@ export default function Products(
         }
     }
 
+    //Получение продуктов по категории
     function handleCategorySelect(categoryData) {
         getProductsByCategory(categoryData)
             .then((products) => {
                 if (searchResult) {
                     products = sortProductsBySearchRes(products, categoryData)
                 }
-                setDisplayProdcuts(getMoreMovies(products))
+                setDisplayProdcuts(getMoreItems(products))
                 setParsedProducts(products)
             })
             .catch((err) => {
                 console.log(err)
             })
     }
-
+    // Выделение производителей из результата запроса  
     function getVendorsFromSearchRes(categoryData) {
         return categoryData.reduce((acc, currVal) => {
             if (currVal.vendor) {
@@ -114,7 +111,7 @@ export default function Products(
         }, [])
     }
 
-
+    // Выделение кол-ва товара из результата запроса
     function getAmountFromSearchRes(categoryData) {
         return categoryData.reduce((acc, currVal) => {
             if (currVal.vendor) {
@@ -124,6 +121,7 @@ export default function Products(
         }, {})
     }
 
+    // Сортировка продуктов первичная
     function sortProductsBySearchRes(data, categoryData) {
         const vendors = getVendorsFromSearchRes(searchResult[categoryData.name])
         const amount = getAmountFromSearchRes(searchResult[categoryData.name])
@@ -147,6 +145,7 @@ export default function Products(
         return res.concat(data)
     }
 
+    // Добавить предмет к заказу
     function addToOrder(item) {
         const orderArr = order
         const index = order.findIndex(orderItem => item.data._id === orderItem.data._id)
@@ -161,7 +160,7 @@ export default function Products(
         localStorage.setItem(localStorageNames.products, JSON.stringify(orderArr))
     }
 
-
+    // Убрать предмет из заказа
     function removeFromOrder(item) {
         const orderArr = order
         const index = order.findIndex(orderItem => item.data._id === orderItem.data._id)
@@ -172,6 +171,7 @@ export default function Products(
         }
     }
 
+    // Произвести выбор товара
     function handleItemSelect(data, count) {
         console.log(data, count)
         if (count > 0) {
@@ -182,7 +182,7 @@ export default function Products(
         console.log(order)
     }
 
-
+    // Получить данные о кол-ве товара
     function getItemCount(product) {
         //Restore from local storage
         const index = order.findIndex(orderItem => orderItem.data._id === product._id)
@@ -193,6 +193,7 @@ export default function Products(
         return 0
     }
 
+    // Выделение данных категорий и товара из поискового запроса
     function structSearchData(data) {
         const res = {}
         data.forEach(category => {
@@ -203,6 +204,7 @@ export default function Products(
         return res
     }
 
+    // При получении данных запроса призвести фильтрацию и отобразить полученные данные
     useEffect(() => {
         const searchCategories = Object.keys(searchResult)
         setDetectedData(Object.values(searchResult))
@@ -210,6 +212,12 @@ export default function Products(
         console.log(categories, filtererdCategories);
         setDisplayCategory(filtererdCategories)
     }, [searchResult])
+
+
+    //При изменении длина массива показываем/прячем кнопку больше
+    useEffect(() => {
+        setShowProductsMoreBtn(parsedProducts.length > 0)
+    }, [parsedProducts.length])
 
     return (
         <>
@@ -221,18 +229,17 @@ export default function Products(
                     <p className="detecteddata__category">{item.category || "..."}</p>
                     <p className="detecteddata__unit">{item.unit || "..."}</p>
                 </div>))
-                console.log(displayDetectedData)
 
             })}</div>
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => {
-                    setDisplayProdcuts(displayProducts.concat(getMoreMovies(parsedProducts)))
+                    setDisplayProdcuts(displayProducts.concat(getMoreItems(parsedProducts)))
                 }}
                 mod="list__grid_mod-categories"
             >
-                <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
-                <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
+                <div style={displayProductsMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
+                <div style={displayProductsPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayCategories.map((category) => {
                     return <CategoryCard
                         name={category.name}
@@ -242,13 +249,13 @@ export default function Products(
                 })}
             </List>
             <List
-                isMoreBtnVisible={showMoreBtn}
+                isMoreBtnVisible={showProductsMoreBtn}
                 handleMore={() => {
-                    setDisplayProdcuts(displayProducts.concat(getMoreMovies(parsedProducts)))
+                    setDisplayProdcuts(displayProducts.concat(getMoreItems(parsedProducts)))
                 }}
             >
-                <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
-                <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
+                <div style={displayCategoriesMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
+                <div style={displayCategoriesPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayProducts.map((product) => {
                     return <ProductCard
                         key={product._id}
@@ -264,8 +271,8 @@ export default function Products(
             <InfoTooltip
                 onClose={closeAllPopups}
                 isOpen={StatusPopupOpen}
-                isOk={isAuthOk}
-                msgText={isAuthOk ? movieMSG.ok : popupMessage}
+                isOk={isPopupStatusOk}
+                msgText={isPopupStatusOk ? movieMSG.ok : popupMessage}
             ></InfoTooltip>
 
         </>

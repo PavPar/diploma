@@ -51,11 +51,7 @@ class MainApi {
         })
     }
 
-    //Получить партнеров
-    getMovies() {
-        return this._accessServer("GET", "/movies")
-    }
-
+ 
     //Получить информацию пользователя
     getUserInfo() {
         return this._accessServer("GET", "/users/me")
@@ -88,41 +84,7 @@ class MainApi {
         return this._sendDataToServer("POST", `/${partnerID}/order/`, {order})
     }
 
-    saveMovie({
-        country,
-        director,
-        duration,
-        year,
-        description,
-        image,
-        trailer,
-        nameRU,
-        nameEN,
-        thumbnail,
-        movieID, }) {
-        return this._sendDataToServer("POST", "/movies", {
-            country,
-            director,
-            duration,
-            year,
-            description,
-            image,
-            trailer,
-            nameRU,
-            nameEN,
-            thumbnail,
-            movieID
-        })
-    }
-
-    getSavedMovies() {
-        return this._accessServer("GET", "/movies")
-    }
-
-    deleteMovie(movieID) {
-        return this._sendDataToServer("DELETE", "/movies/" + movieID)
-    }
-
+ 
     tokenizatorSearch(partnerID,searchReq){
         console.log(partnerID,searchReq)
         return this._sendDataToServer("POST","/tokenize",{partnerID,searchReq})

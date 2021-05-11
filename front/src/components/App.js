@@ -1,9 +1,7 @@
 import '../App.css';
 import Main from './Main';
-import Movies from './Movies';
 import Products from './Products';
 import Partners from './Partners'
-import SavedMovies from './SavedMovies';
 import Profile from './Profile';
 import Register from './Register';
 import Login from './Login'
@@ -18,7 +16,6 @@ import Steps from './Steps';
 import { localStorageNames } from '../configs/constants';
 
 import MainApi from '../utils/MainApi'
-import MoviesApi from "../utils/MoviesApi"
 import userContext from './context/UserContext';
 
 import logo from '../images/logo.svg'
@@ -26,8 +23,20 @@ import logo from '../images/logo.svg'
 import { Route, Switch, useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react';
 function App() {
-  const [userInfo, setUserInfo] = useState({})
+  const [userInfo, setUserInfo] = useState({})//Информация о пользователе
+  const [isLoggedIn, setLoggedIn] = useState(() => {
+    return handleTokenCheck()
+  });//Проверка дейстивительности токена
 
+  const history = useHistory();
+
+  const [partners, setPartners] = useState([])//Список магазинов партнеров
+  const [categories, setCategories] = useState([])//Категории магазина партнера
+
+  const [selectedPartnerData, setPartnerData] = useState({})//Данные магазина партнера
+  const [isPartnerSelected, setPartnerSelected] = useState(true)//Был ли магаизин партнер выбран
+
+  //Автороизация пользователя
   function handleLogin({ email, password }) {
     return MainApi.authUser({ email, password })
       .then((data) => {
@@ -39,6 +48,7 @@ function App() {
       })
   }
 
+  //Логоут пользователя
   function handleLogout() {
     localStorage.removeItem(localStorageNames.token)
     localStorage.removeItem(localStorageNames.userMoviesSearch)
@@ -46,14 +56,17 @@ function App() {
     setLoggedIn(false);
   }
 
+  //Измененение информации о пользователе
   function handlePatch({ name, email }) {
     return MainApi.patchUserInfo({ name, email })
   }
 
+  //Регистрация пользователя
   function handleRegister({ name, email, password }) {
     return MainApi.createUser({ name, email, password })
   }
 
+  //Проверка токена пользователя
   function handleTokenCheck() {
     if (localStorage.getItem(localStorageNames.token)) {
       const jwt = localStorage.getItem(localStorageNames.token);
@@ -74,139 +87,70 @@ function App() {
     return false
   }
 
-
-  const [isLoggedIn, setLoggedIn] = useState(() => {
-    return handleTokenCheck()
-  });
-
-  function nullFixer(value) {
-    return (value == null || value == "") ? "неизвестно" : value
+  //Передача запроса на поиск API 
+  function handleTokenizatorSearch(searchReq) {
+    return MainApi.tokenizatorSearch(selectedPartnerData._id, searchReq)
   }
 
-  function handleMovieSave(cardData) {
-    Object.keys(cardData).forEach(key => {
-      cardData[key] = nullFixer(cardData[key]);
-    })
-
-    setMovies(movies.filter(movie => {
-      if (movie.id === cardData.id) {
-        movie.isOwn = true;
-      }
-      return true;
-    }))
-
-
-
-    const {
-      country,
-      director,
-      duration,
-      year,
-      description,
-      image,
-      trailerLink,
-      nameRU,
-      nameEN,
-      id,
-    } = cardData
-
-
-    return MainApi.saveMovie({
-      country,
-      director,
-      duration,
-      year,
-      description,
-      image: image.url,
-      trailer: trailerLink,
-      nameRU,
-      nameEN,
-      thumbnail: image.url,
-      movieID: id + "",
-    })
+  //Произведение выбора партнера
+  function handlePartnerSelect(partnerData) {
+    localStorage.setItem(localStorageNames.selectedPartner, JSON.stringify(partnerData))
+    setPartnerData(partnerData)
+    console.log(partnerData)
+    setPartnerSelected(true);
+    history.push('/order/products')
   }
 
-  function handleMovieDelete(id) {
-    return MainApi.deleteMovie(id)
-      .then((data) => {
-        setMovies(movies.filter(movie => {
-          if (movie.id + "" === id + "") {
-            movie.isOwn = false;
-          }
-          return true;
-        }))
-
-        if (localStorage.getItem(localStorageNames.userSavedMoviesSearch)) {
-          const savedData = JSON.parse(localStorage.getItem(localStorageNames.userSavedMoviesSearch))
-
-          const savedDataRes = savedData.filter(movie => {
-            return movie.movieID !== id + ""
-          })
-          localStorage.setItem(localStorageNames.userSavedMoviesSearch, JSON.stringify(savedDataRes))
-        }
-
-
-        return data
-      })
-  }
-
-  function getSavedMovies() {
-    return MainApi.getSavedMovies()
-  }
-
-  const [movies, setMovies] = useState([])
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      return;
+  //Получение продуктов определенной категории
+  function getProductByCategory(categoryData) {
+    let partnerData = {}
+    if (localStorage.getItem(localStorageNames.selectedPartner)) {
+      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
     }
-    Promise.all([
-      MoviesApi.getMovies(),
-      MainApi.getSavedMovies()
-    ])
+    return MainApi.getProductByCategory(partnerData._id, categoryData.categoryID[0])
+  }
+
+  //Подтверждение заказа
+  function handleOrderSubmit(order) {
+    console.log(selectedPartnerData)
+    return MainApi.sendOrder(selectedPartnerData._id, order)
+  }
+
+  //Восстановление данных выбранного пратнера
+  useEffect(() => {
+    if (localStorage.getItem(localStorageNames.selectedPartner)) {
+      const partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
+      setPartnerData(partnerData)
+      setPartnerSelected(true)
+      return
+    }
+    setPartnerSelected(false)
+  }, [])
+
+  //Процесс выбора партнера
+  useEffect(() => {
+    if (!selectedPartnerData) {
+      return
+    }
+    let partnerData = {}
+    if (localStorage.getItem(localStorageNames.selectedPartner)) {
+      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
+    }
+    Promise.all([MainApi.getCategories(partnerData._id)])
       .then((data) => {
-        const [movies, saved] = data
+        const [categories] = data;
 
-        const result = movies.filter((movie) => {
-          let isOk = true
+        setCategories(categories)
 
-          if (!movie.image || !movie.duration) {
-            return false;
-          }
-
-          Object.keys(movie).forEach(key => {
-            movie[key] = nullFixer(movie[key]);
-          })
-
-          if (movie.image !== null && typeof movie.image === 'object') {
-            movie.image.url = MoviesApi.getSyncBaseUrl() + movie.image.url
-          } else {
-            isOk = false;
-          }
-
-          if (saved.find(savedMovie => movie.id + "" === savedMovie.movieID)) {
-            movie.isOwn = true;
-          }
-
-          return isOk
-        })
-
-        setMovies(result)
+        console.log(categories)
       })
       .catch((err) => {
         console.log(err)
       })
-  }, [isLoggedIn])
+  }, [selectedPartnerData])
 
-  //=================
-  const history = useHistory();
 
-  const [partners, setPartners] = useState([])
-  const [products, setProducts] = useState([])
-  const [categories, setCategories] = useState([])
-
-  const [selectedPartnerData, setPartnerData] = useState({})
-
+  //Получение списка партнеров
   useEffect(() => {
     MainApi.getPartners()
       .then((partnersList) => {
@@ -217,65 +161,12 @@ function App() {
       })
   }, [])
 
-  function handleTokenizatorSearch(searchReq){
-    return MainApi.tokenizatorSearch(selectedPartnerData._id,searchReq)
-  }
 
-  useEffect(() => {
-    let partnerData = {}
-    if (localStorage.getItem(localStorageNames.selectedPartner)) {
-      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
-    }
-    Promise.all([MainApi.getProducts(partnerData._id), MainApi.getCategories(partnerData._id)])
-      .then((data) => {
-        const [products, categories] = data;
-
-        setProducts(products)
-        setCategories(categories)
-
-        console.log(products)
-        console.log(categories)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [selectedPartnerData])
-
-  function handlePartnerSelect(partnerData) {
-    localStorage.setItem(localStorageNames.selectedPartner, JSON.stringify(partnerData))
-    setPartnerData(partnerData)
-    console.log(partnerData)
-
-    history.push('/order/products')
-  }
-
-  function getProductByCategory(categoryData) {
-    let partnerData = {}
-    if (localStorage.getItem(localStorageNames.selectedPartner)) {
-      partnerData = JSON.parse(localStorage.getItem(localStorageNames.selectedPartner))
-    }
-    return MainApi.getProductByCategory(partnerData._id, categoryData.categoryID[0])
-  }
-
-  function handleOrderSubmit(order) {
-    console.log(selectedPartnerData)
-    return MainApi.sendOrder(selectedPartnerData._id,order)
-  }
-  
   return (
     <Switch>
       <Route exact path="/">
         <Main isLoggedIn={isLoggedIn}></Main>
       </Route>
-      <ProtectedRoute path="/movies" redirectTo="/" controlState={isLoggedIn}>
-        <Movies
-          isLoggedIn={isLoggedIn}
-          handleSave={handleMovieSave}
-          handleDelete={handleMovieDelete}
-          getSavedMovies={getSavedMovies}
-          movies={movies}
-        />
-      </ProtectedRoute>
       <ProtectedRoute path="/partners" redirectTo="/" controlState={isLoggedIn}>
         <Partners
           partners={partners}
@@ -286,7 +177,9 @@ function App() {
         <Header src={logo} menu={true}>
           <HeaderNav isLoggedIn={true} />
         </Header>
-        <Steps />
+        <Steps
+          isPartnerSelected={isPartnerSelected}
+        />
         <Switch>
           <Route path="/order/partner">
             <Partners
@@ -294,20 +187,18 @@ function App() {
               handlePartnerSelect={handlePartnerSelect}
             />
           </Route>
-          <ProtectedRoute redirectTo="/order/partner" controlState={selectedPartnerData} path="/order/products">
+          <ProtectedRoute redirectTo="/order/partner" controlState={isPartnerSelected} path="/order/products">
             <Products
               partners={partners}
-              products={products}
               handlePartnerSelect={handlePartnerSelect}
               categories={categories}
               getProductsByCategory={getProductByCategory}
               handleTokenizatorSearch={handleTokenizatorSearch}
             />
           </ProtectedRoute>
-          <ProtectedRoute redirectTo="/order/partner" controlState={selectedPartnerData} path="/order/bill">
+          <ProtectedRoute redirectTo="/order/partner" controlState={isPartnerSelected} path="/order/bill">
             <Bill
               partners={partners}
-              products={products}
               handlePartnerSelect={handlePartnerSelect}
               categories={categories}
               getProductsByCategory={getProductByCategory}
@@ -317,20 +208,12 @@ function App() {
         </Switch>
         <Footer />
       </ProtectedRoute>
-      <ProtectedRoute path="/profile" redirectTo="/" loggedIn={isLoggedIn}>
+      <ProtectedRoute path="/profile" redirectTo="/" controlState={isLoggedIn}>
         <userContext.Provider value={userInfo}>
           <Profile userInfo={userInfo} handleLogout={handleLogout} handlePatch={handlePatch}></Profile>
         </userContext.Provider>
       </ProtectedRoute>
-      <ProtectedRoute path="/saved-movies" redirectTo="/" loggedIn={isLoggedIn}>
-        <SavedMovies
-          isLoggedIn={isLoggedIn}
-          getSavedMovies={getSavedMovies}
-          handleDelete={handleMovieDelete}
-          movies={movies}
-        />
-      </ProtectedRoute>
-
+ 
       <Route exact path="/signup">
         <Register handleSubmit={handleRegister} handleAuth={handleLogin}></Register>
       </Route>
