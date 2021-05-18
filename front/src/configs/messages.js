@@ -11,7 +11,10 @@ const profileMSG = {
 
 const authMSG = {
     "ok": 'Вы успешно зарегистрировались!',
-    "unknownErr": 'Что-то пошло не так! Попробуйте ещё раз.'
+    "unknownErr": 'Что-то пошло не так! Попробуйте ещё раз.',
+    "notFoundUser":"Такого пользователя нет",
+    "badRequest":"Запрос не корректен",
+    "badPassword":"Неверный пароль",
 }
 
 export { movieMSG, profileMSG, authMSG }

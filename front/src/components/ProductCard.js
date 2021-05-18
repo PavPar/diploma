@@ -4,8 +4,9 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
     const inputRef = useRef()
 
     const [itemCounter, setItemCounter] = useState(counter)
+
     function handleAdd() {
-        setItemCounter(illusiveCounter)
+        setItemCounter(illusiveCounter>0?illusiveCounter:1)
     }
 
     function handleMore() {
@@ -39,7 +40,7 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
             <div className="productcard__buttonblock">
                 {(() => {
                     if (itemCounter <= 0) {
-                        return (<button style={illusiveCounter>0?{backgroundColor:"yellow"}:{}} className="productcard__button productcard__button-type-add" onClick={handleAdd}>+</button>)
+                        return (<button style={illusiveCounter>0?{backgroundColor:"gold"}:{}} className="productcard__button productcard__button-type-add" onClick={handleAdd}>+</button>)
                     }
                     else {
                         return (

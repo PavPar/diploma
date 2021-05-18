@@ -23,6 +23,7 @@ export default function Login({ handleSubmit }) {
 
     const inputValidity = [isEmailValid, isPasswordValid]
     const [showErrMsg, setShowErrMsg] = useState(false);
+    const [getPopupMsg, setPopupMsg] = useState(authMSG.unknownErr)
 
     const emailRef = useRef()
     const passwordRef = useRef()
@@ -40,10 +41,28 @@ export default function Login({ handleSubmit }) {
 
         handleSubmit({ email, password })
             .then((res) => {
-                history.push('/movies')
+                history.push('/order')
             })
             .catch((err) => {
                 console.log(err)
+                switch (err.status) {
+                    case 400: {
+                        setPopupMsg(authMSG.badRequest)
+                        break;
+                    }
+                    case 401: {
+                        setPopupMsg(authMSG.badPassword)
+                        break;
+                    }
+                    case 404: {
+                        setPopupMsg(authMSG.notFoundUser)
+                        break;
+                    }
+                    default:{
+                        setPopupMsg(authMSG.unknownErr)
+                        break;
+                    }
+                }
                 setAuthStatus(false)
                 setStatusPopupOpen(true)
             })
@@ -130,7 +149,7 @@ export default function Login({ handleSubmit }) {
                 onClose={closeAllPopups}
                 isOpen={StatusPopupOpen}
                 isOk={isAuthOk}
-                msgText={isAuthOk ? authMSG.ok : authMSG.unknownErr}
+                msgText={getPopupMsg}
             ></InfoTooltip>
         </>
     )

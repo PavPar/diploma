@@ -14,6 +14,7 @@ const ErrorHandler = require('./utils/errorHandler/ErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 require('dotenv').config({ path: path.join(__dirname, 'envVars.env') });
 
+
 const app = express();
 
 const limiter = rateLimit({
@@ -24,8 +25,8 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(helmet());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb'}));
 
 mongoose.connect('mongodb://localhost:27017/mainAPI', {
   useNewUrlParser: true,

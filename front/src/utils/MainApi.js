@@ -21,11 +21,24 @@ class MainApi {
     }
 
     //Отправка данных на сервер с телом запроса
-    _sendDataToServer(method, url, bodyObj) {
+    _sendDataToServer(method, url, bodyObj,headers={}) {
         return fetch(this._options.baseUrl + url, {
             method: method,
-            headers: this._options.headers,
+            headers: {...this._options.headers,...headers},
             body: JSON.stringify(bodyObj)
+        }).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            return Promise.reject({ status: res.status, msg: res.statusText });
+        })
+    }
+
+    _sendDataToServerNoJSON(method, url, bodyObj,headers={}) {
+        return fetch(this._options.baseUrl + url, {
+            method: method,
+            headers: {...this._options.headers,...headers},
+            body: bodyObj
         }).then(res => {
             if (res.ok) {
                 return res.json();
@@ -90,6 +103,10 @@ class MainApi {
         return this._sendDataToServer("POST","/tokenize",{partnerID,searchReq})
     }
 
+    postVoiceRecognition(data){
+        return this._sendDataToServerNoJSON("POST","/audiotokenize",{"audio":data},{ 'enctype': 'multipart/form-data'})
+    }
+
     //Проверка токена
     checkToken(token) {
         return this._accessServer("GET", "/users/me", {
@@ -111,6 +128,6 @@ export default new MainApi({
     baseUrl: 'http://localhost:3000',
     headers: {
         authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        'Content-Type': 'application/json'
+     
     }
 });;

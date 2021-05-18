@@ -110,6 +110,7 @@ input {
   width: 100%;
   margin: 0 auto;
   padding-top: 50px;
+  min-height: 50vh;
 }
 
 .partner {
@@ -258,4 +259,21 @@ input {
   display: grid;
   grid-template-columns: repeat(3,1fr);
   gap: 10px
+}
+
+.confirmorder{
+  padding: 15px;
+  background-color: green;
+  width: 25vw;
+  margin: 25px auto;
+  color: white;
+}
+
+.searchform__option_type-return{
+  padding: 10px 5px;
+  background-color: #3456f3;
+  color: white;
+  border: #3456f3 1px solid;
+  border-radius: 15px;
+  margin-left: 15px;
 }

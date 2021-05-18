@@ -10,8 +10,6 @@ import { useRef, useState } from 'react';
 import { movieMSG } from '../configs/messages';
 import { localStorageNames } from "../configs/constants";
 
-import logo from '../images/logo.svg'
-import err from '../images/err.svg'
 export default function Bill({ handleOrderSubmit }) {
     const inputRef = useRef();
     const [displayMessage, setDisplayMessage] = useState(false);
@@ -21,6 +19,13 @@ export default function Bill({ handleOrderSubmit }) {
 
     function handleSubmit() {
         const orderArr = order.map(product => { return { id: product.data.id, count: product.count } })
+
+        if(orderArr.length == 0){
+            setPopupMessage("Корзина пуста")
+            setStatusPopupOpen(true)
+            return;
+        }
+    
         handleOrderSubmit(orderArr)
             .then(() => {
                 setAuthStatus(true)
@@ -100,15 +105,19 @@ export default function Bill({ handleOrderSubmit }) {
         return 0
     }
 
+    useEffect(()=>{
+        setDisplayMessage(!order.length>0)
+    },order)
+
     return (
         <>
-            <SearchForm inputRef={inputRef}></SearchForm>
-            <button onClick={handleSubmit}>Подтвердить заказ</button>
+            {/* <SearchForm inputRef={inputRef}></SearchForm> */}
+            <button style={order.length>0?{}:{display:'none'}} className="confirmorder" onClick={handleSubmit}>Подтвердить заказ</button>
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => { }}
             >
-                <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
+                <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Корзина пуста</div>
                 <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {order.map(({ data, count }) => {
                     let product = data

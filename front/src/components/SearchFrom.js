@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 
-export default function SearchForm({ handleSubmit, inputRef }) {
-
-    const [isShortFilm, setShortFilmStat] = useState(false)
-
+export default function SearchForm({ handleSubmit, inputRef, showButton=false,handleClick }) {
     return (
         <section className="searchform">
             <form className="searchform__searchbar" noValidate>
@@ -14,11 +11,13 @@ export default function SearchForm({ handleSubmit, inputRef }) {
                     onClick={
                         (event) => {
                             event.preventDefault();
-                            handleSubmit({ isShortFilm:false })
+                            handleSubmit({ isShortFilm: false })
                         }
                     }></button>
             </form>
-        
+            {showButton && (
+                <button className="searchform__option searchform__option_type-return" onClick={handleClick}>Вернуть все Категории</button>
+            )}
             <hr className="searchform__breakline"></hr>
         </section>
     )

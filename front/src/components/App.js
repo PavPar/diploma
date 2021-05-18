@@ -116,6 +116,10 @@ function App() {
     return MainApi.sendOrder(selectedPartnerData._id, order)
   }
 
+  function postVoiceRecognition(data){
+    return MainApi.postVoiceRecognition(data)
+  }
+
   //Восстановление данных выбранного пратнера
   useEffect(() => {
     if (localStorage.getItem(localStorageNames.selectedPartner)) {
@@ -194,9 +198,10 @@ function App() {
               categories={categories}
               getProductsByCategory={getProductByCategory}
               handleTokenizatorSearch={handleTokenizatorSearch}
+              postVoiceRecognition={postVoiceRecognition}
             />
           </ProtectedRoute>
-          <ProtectedRoute redirectTo="/order/partner" controlState={isPartnerSelected} path="/order/bill">
+          <ProtectedRoute redirectTo="/order/partner" controlState={isPartnerSelected} path="/order">
             <Bill
               partners={partners}
               handlePartnerSelect={handlePartnerSelect}

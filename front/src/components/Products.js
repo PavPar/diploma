@@ -6,12 +6,15 @@ import InfoTooltip from './InfoTooltip'
 import ProductCard from './ProductCard'
 import CategoryCard from './CategoryCard'
 
-import { useRef, useState } from 'react';
-import useWindowDimensions from '../utils/useWindowDimensions'
+import { createRef, useRef, useState } from 'react';
 import { movieMSG } from '../configs/messages';
 import { cardsOnWidth, localStorageNames } from "../configs/constants";
+import YandexCloudAPI from "../utils/YandexCloudAPI";
 
-export default function Products({ categories = [],getProductsByCategory,handleTokenizatorSearch }) {
+import useWindowDimensions from '../utils/useWindowDimensions'
+import useRecorder from '../utils/useMyRecorder'
+
+export default function Products({ categories = [], getProductsByCategory, handleTokenizatorSearch, postVoiceRecognition }) {
     const inputRef = useRef();
 
     const [parsedProducts, setParsedProducts] = useState([]) // Все продукты полученные из запросы 
@@ -30,14 +33,17 @@ export default function Products({ categories = [],getProductsByCategory,handleT
     const [isPopupStatusOk, setPopupStatus] = React.useState(false);//Изменение значка popup в зависимости от состояния запроса 
 
     const [searchResult, setSearchResult] = useState([])// Результаты поиска 
-    const [displayDetectedData, setDetectedData] = useState([])// Отображаемые результаты поиска (что распозналось) 
+    const [showSearchResult, setShowSearchResult] = useState(false);//Отображать или не отображать результаты
 
+    const [displayDetectedData, setDetectedData] = useState([])// Отображаемые результаты поиска (что распозналось) 
+    const [isDetectedDataVisible, setDetectedDataVisible] = useState(false)
     const [showProductsMoreBtn, setShowProductsMoreBtn] = useState(false)//Управление видимостью кнопки больше
 
     const { width } = useWindowDimensions();
+    const [audioURL, isRecording, startRecording, stopRecording, getAudioBlob] = useRecorder();
 
     //Выполнить поиск
-    function handleSubmit() {
+    function handleSearch() {
         if (!inputRef.current.validity.valid) {
             setPopupMessage(movieMSG.noRequestVal)
             setPopupStatus(false)
@@ -52,6 +58,8 @@ export default function Products({ categories = [],getProductsByCategory,handleT
                 setSearchResult(structSearchData(searchData))
                 setDisplayCategory([])
                 setDisplayProdcuts([])
+                setShowSearchResult(true);
+                setDetectedDataVisible(true)
             })
             .catch(err => {
                 setPopupMessage(err.msg)
@@ -91,7 +99,7 @@ export default function Products({ categories = [],getProductsByCategory,handleT
     function handleCategorySelect(categoryData) {
         getProductsByCategory(categoryData)
             .then((products) => {
-                if (searchResult) {
+                if (showSearchResult && searchResult) {
                     products = sortProductsBySearchRes(products, categoryData)
                 }
                 setDisplayProdcuts(getMoreItems(products))
@@ -101,6 +109,7 @@ export default function Products({ categories = [],getProductsByCategory,handleT
                 console.log(err)
             })
     }
+
     // Выделение производителей из результата запроса  
     function getVendorsFromSearchRes(categoryData) {
         return categoryData.reduce((acc, currVal) => {
@@ -141,8 +150,10 @@ export default function Products({ categories = [],getProductsByCategory,handleT
             }
         })
         res.sort()
-        console.log(res)
-        return res.concat(data)
+        if (!res.length > 0) {
+            return res.concat(data)
+        }
+        return res //res.concat(data)
     }
 
     // Добавить предмет к заказу
@@ -156,7 +167,6 @@ export default function Products({ categories = [],getProductsByCategory,handleT
         }
         setOrder(orderArr);
         console.log(order)
-        //TODO - Move to file 
         localStorage.setItem(localStorageNames.products, JSON.stringify(orderArr))
     }
 
@@ -204,33 +214,111 @@ export default function Products({ categories = [],getProductsByCategory,handleT
         return res
     }
 
+    function returnAllCategories() {
+        setShowSearchResult(false)
+        setDisplayCategory(categories)
+        setDetectedDataVisible(false)
+        setParsedProducts([])
+        setDisplayProdcuts([])
+    }
+
+    function blobToUint8Array(b) {
+        var uri = URL.createObjectURL(b),
+            xhr = new XMLHttpRequest(),
+            i,
+            ui8;
+
+        xhr.open('GET', uri, false);
+        xhr.send();
+
+        URL.revokeObjectURL(uri);
+
+        ui8 = new Uint8Array(xhr.response.length);
+
+        for (i = 0; i < xhr.response.length; ++i) {
+            ui8[i] = xhr.response.charCodeAt(i);
+        }
+
+        return ui8;
+    }
+
+    function handleVoiceSearch() {
+        fetch(audioURL)
+            .then(response => response.blob())
+            .then(file => {
+                console.log(file)
+                const formData = new FormData();
+                formData.append('upl', file, 'myfiletosave.ogg');
+                fetch('http://localhost:3000/audiotokenize',
+                    {
+                        method: 'post',
+                        body: formData,
+                        headers:{
+                            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+                            'enctype': 'multipart/form-data'
+                        }
+                    })
+                // postVoiceRecognition(formData)
+                    .then((res) => {
+                        console.log(res)
+                    })
+                    .catch(err => console.log(err))
+            });
+    }
+
     // При получении данных запроса призвести фильтрацию и отобразить полученные данные
     useEffect(() => {
         const searchCategories = Object.keys(searchResult)
         setDetectedData(Object.values(searchResult))
         const filtererdCategories = categories.filter(categoryData => searchCategories.find(searchCategoryName => searchCategoryName.toUpperCase() === categoryData.name.toUpperCase()))
         console.log(categories, filtererdCategories);
-        setDisplayCategory(filtererdCategories)
+        if (filtererdCategories.length > 0) {
+            setDisplayCategory(filtererdCategories)
+        }
     }, [searchResult])
 
+    useEffect(() => {
+        if (displayCategories.length == 1) {
+            handleCategorySelect(displayCategories[0])
+        }
+    }, [displayCategories])
 
     //При изменении длина массива показываем/прячем кнопку больше
     useEffect(() => {
         setShowProductsMoreBtn(parsedProducts.length > 0)
     }, [parsedProducts.length])
 
+    //Для того чтобы отображались первичные категории
+    useEffect(() => {
+        setDisplayCategory(categories)
+    }, [categories])
+
+    const audioRef = useRef()
     return (
         <>
-            <SearchForm handleSubmit={handleSubmit} inputRef={inputRef}></SearchForm>
-            <div className="detecteddatalist">{displayDetectedData.map(items => {
-                return items.map(item => (<div className="detecteddata">
-                    <p className="detecteddata__venodor">{item.vendor || "..."}</p>
-                    <p className="detecteddata__amount">{item.amount || "..."}</p>
-                    <p className="detecteddata__category">{item.category || "..."}</p>
-                    <p className="detecteddata__unit">{item.unit || "..."}</p>
-                </div>))
+            <audio ref={audioRef} src={audioURL} controls />
+            {
+                isRecording ? (
+                    <button onClick={stopRecording} disabled={!isRecording}>
+                        stop recording
+                    </button>) : (
+                    <button onClick={startRecording} disabled={isRecording}>
+                        start recording
+                    </button>)
+            }
+            <button onClick={handleVoiceSearch}>Send</button>
 
-            })}</div>
+            <SearchForm handleSubmit={handleSearch} inputRef={inputRef} showButton={showSearchResult} handleClick={returnAllCategories}></SearchForm>
+            {isDetectedDataVisible && (
+                <div className="detecteddatalist">{displayDetectedData.map(items => {
+                    return items.map(item => (<div className="detecteddata">
+                        <p className="detecteddata__venodor">{item.vendor || "..."}</p>
+                        <p className="detecteddata__amount">{item.amount || "..."}</p>
+                        <p className="detecteddata__category">{item.category || "..."}</p>
+                        <p className="detecteddata__unit">{item.unit || "..."}</p>
+                    </div>))
+
+                })}</div>)}
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => {
@@ -241,6 +329,7 @@ export default function Products({ categories = [],getProductsByCategory,handleT
                 <div style={displayProductsMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayProductsPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayCategories.map((category) => {
+                    console.log(category)
                     return <CategoryCard
                         name={category.name}
                         handleSelect={handleCategorySelect}
@@ -248,7 +337,8 @@ export default function Products({ categories = [],getProductsByCategory,handleT
                     />
                 })}
             </List>
-            <List
+
+            {displayProducts && (<List
                 isMoreBtnVisible={showProductsMoreBtn}
                 handleMore={() => {
                     setDisplayProdcuts(displayProducts.concat(getMoreItems(parsedProducts)))
@@ -267,7 +357,7 @@ export default function Products({ categories = [],getProductsByCategory,handleT
                         handleItemAdd={handleItemSelect}
                     />
                 })}
-            </List>
+            </List>)}
             <InfoTooltip
                 onClose={closeAllPopups}
                 isOpen={StatusPopupOpen}
