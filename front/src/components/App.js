@@ -116,8 +116,8 @@ function App() {
     return MainApi.sendOrder(selectedPartnerData._id, order)
   }
 
-  function postVoiceRecognition(data){
-    return MainApi.postVoiceRecognition(data)
+  function postVoiceRecognition(audioURL){
+    return MainApi.audioSearch(selectedPartnerData._id,audioURL)
   }
 
   //Восстановление данных выбранного пратнера

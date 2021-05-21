@@ -68,6 +68,25 @@ export default function Products({ categories = [], getProductsByCategory, handl
             })
     }
 
+    //Выполнить голосовой поиск
+    function handleVoiceSearch() {
+        postVoiceRecognition(audioURL)
+            .then(searchData => {
+                console.log(searchData)
+                setSearchResult(structSearchData(searchData))
+                setDisplayCategory([])
+                setDisplayProdcuts([])
+                setShowSearchResult(true);
+                setDetectedDataVisible(true)
+            })
+            .catch(err => {
+                console.log(err)
+                setPopupMessage(err.msg)
+                setPopupStatus(false)
+                setStatusPopupOpen(true)
+            })
+    }
+
     //Определение кол-ва карточек отображаемых в списке
     function getStep(width) {
         const step = Object.keys(cardsOnWidth).filter((x) => x < width).sort((a, b) => b - a)[0];//magic
@@ -222,49 +241,6 @@ export default function Products({ categories = [], getProductsByCategory, handl
         setDisplayProdcuts([])
     }
 
-    function blobToUint8Array(b) {
-        var uri = URL.createObjectURL(b),
-            xhr = new XMLHttpRequest(),
-            i,
-            ui8;
-
-        xhr.open('GET', uri, false);
-        xhr.send();
-
-        URL.revokeObjectURL(uri);
-
-        ui8 = new Uint8Array(xhr.response.length);
-
-        for (i = 0; i < xhr.response.length; ++i) {
-            ui8[i] = xhr.response.charCodeAt(i);
-        }
-
-        return ui8;
-    }
-
-    function handleVoiceSearch() {
-        fetch(audioURL)
-            .then(response => response.blob())
-            .then(file => {
-                console.log(file)
-                const formData = new FormData();
-                formData.append('upl', file, 'myfiletosave.ogg');
-                fetch('http://localhost:3000/audiotokenize',
-                    {
-                        method: 'post',
-                        body: formData,
-                        headers:{
-                            authorization: `Bearer ${localStorage.getItem('jwt')}`,
-                            'enctype': 'multipart/form-data'
-                        }
-                    })
-                // postVoiceRecognition(formData)
-                    .then((res) => {
-                        console.log(res)
-                    })
-                    .catch(err => console.log(err))
-            });
-    }
 
     // При получении данных запроса призвести фильтрацию и отобразить полученные данные
     useEffect(() => {
@@ -329,7 +305,6 @@ export default function Products({ categories = [], getProductsByCategory, handl
                 <div style={displayProductsMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayProductsPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayCategories.map((category) => {
-                    console.log(category)
                     return <CategoryCard
                         name={category.name}
                         handleSelect={handleCategorySelect}

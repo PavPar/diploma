@@ -21,10 +21,10 @@ class MainApi {
     }
 
     //Отправка данных на сервер с телом запроса
-    _sendDataToServer(method, url, bodyObj,headers={}) {
+    _sendDataToServer(method, url, bodyObj, headers = {}) {
         return fetch(this._options.baseUrl + url, {
             method: method,
-            headers: {...this._options.headers,...headers},
+            headers: { ...this._options.headers, ...headers },
             body: JSON.stringify(bodyObj)
         }).then(res => {
             if (res.ok) {
@@ -34,10 +34,10 @@ class MainApi {
         })
     }
 
-    _sendDataToServerNoJSON(method, url, bodyObj,headers={}) {
+    _sendDataToServerNoJSON(method, url, bodyObj, headers = {}) {
         return fetch(this._options.baseUrl + url, {
             method: method,
-            headers: {...this._options.headers,...headers},
+            headers: { ...this._options.headers, ...headers },
             body: bodyObj
         }).then(res => {
             if (res.ok) {
@@ -64,7 +64,7 @@ class MainApi {
         })
     }
 
- 
+
     //Получить информацию пользователя
     getUserInfo() {
         return this._accessServer("GET", "/users/me")
@@ -94,19 +94,42 @@ class MainApi {
     }
 
     sendOrder(partnerID, order) {
-        return this._sendDataToServer("POST", `/${partnerID}/order/`, {order})
+        return this._sendDataToServer("POST", `/${partnerID}/order/`, { order })
     }
 
- 
-    tokenizatorSearch(partnerID,searchReq){
-        console.log(partnerID,searchReq)
-        return this._sendDataToServer("POST","/tokenize",{partnerID,searchReq})
+
+    tokenizatorSearch(partnerID, searchReq) {
+        console.log(partnerID, searchReq)
+        return this._sendDataToServer("POST", "/tokenize", { partnerID, searchReq })
     }
 
-    postVoiceRecognition(data){
-        return this._sendDataToServerNoJSON("POST","/audiotokenize",{"audio":data},{ 'enctype': 'multipart/form-data'})
-    }
 
+    audioSearch(partnerID, audioURL) {
+        return fetch(audioURL)
+            .then(response => response.blob())
+            .then(file => {
+                console.log(file)
+                const formData = new FormData();
+                formData.append('upl', file, 'myfiletosave.ogg');
+                formData.append('partnerID', partnerID);
+                return fetch(`${this._options.baseUrl}/audiotokenize`,
+                    {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+                            'enctype': 'multipart/form-data'
+                        }
+                    })
+            })
+            .then(res => {
+                if (res.ok) {
+                    return res.json();
+                }
+                return Promise.reject({ status: res.status, msg: res.statusText });
+            })
+            .catch(err=>console.log(err))
+    }
     //Проверка токена
     checkToken(token) {
         return this._accessServer("GET", "/users/me", {
@@ -128,6 +151,6 @@ export default new MainApi({
     baseUrl: 'http://localhost:3000',
     headers: {
         authorization: `Bearer ${localStorage.getItem('jwt')}`,
-     
+        "Content-Type": "application/json",
     }
 });;
