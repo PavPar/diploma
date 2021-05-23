@@ -5,6 +5,7 @@ import List from './List';
 import InfoTooltip from './InfoTooltip'
 import ProductCard from './ProductCard'
 import CategoryCard from './CategoryCard'
+import AudioRecord from './AudioRecord'
 
 import { createRef, useRef, useState } from 'react';
 import { movieMSG } from '../configs/messages';
@@ -12,7 +13,7 @@ import { cardsOnWidth, localStorageNames } from "../configs/constants";
 import YandexCloudAPI from "../utils/YandexCloudAPI";
 
 import useWindowDimensions from '../utils/useWindowDimensions'
-import useRecorder from '../utils/useMyRecorder'
+// import useRecorder from '../utils/useMyRecorder'
 
 export default function Products({ categories = [], getProductsByCategory, handleTokenizatorSearch, postVoiceRecognition }) {
     const inputRef = useRef();
@@ -40,7 +41,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
     const [showProductsMoreBtn, setShowProductsMoreBtn] = useState(false)//Управление видимостью кнопки больше
 
     const { width } = useWindowDimensions();
-    const [audioURL, isRecording, startRecording, stopRecording, getAudioBlob] = useRecorder();
+    // const [audioURL, isRecording, startRecording, stopRecording, getAudioBlob] = useRecorder();
 
     //Выполнить поиск
     function handleSearch() {
@@ -69,7 +70,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
     }
 
     //Выполнить голосовой поиск
-    function handleVoiceSearch() {
+    function handleVoiceSearch(audioURL) {
         postVoiceRecognition(audioURL)
             .then(searchData => {
                 console.log(searchData)
@@ -269,11 +270,9 @@ export default function Products({ categories = [], getProductsByCategory, handl
         setDisplayCategory(categories)
     }, [categories])
 
-    const audioRef = useRef()
     return (
         <>
-            <audio ref={audioRef} src={audioURL} controls />
-            {
+            {/* {
                 isRecording ? (
                     <button onClick={stopRecording} disabled={!isRecording}>
                         stop recording
@@ -282,19 +281,34 @@ export default function Products({ categories = [], getProductsByCategory, handl
                         start recording
                     </button>)
             }
-            <button onClick={handleVoiceSearch}>Send</button>
+            <button onClick={handleVoiceSearch}>Send</button> */}
+            <section className="audiosearch">
+                <h2 className="audiosearch__title">Голосовой заказ продуктов!</h2>
+                <hr className="audiosearch__hr" />
+                <p className="audiosearch__desc">Чтобы начать нажмите на кнопку и продиктуйте ассистенту интересующие вас товары</p>
+                <AudioRecord handleVoiceSearch={handleVoiceSearch} />
+            </section>
 
             <SearchForm handleSubmit={handleSearch} inputRef={inputRef} showButton={showSearchResult} handleClick={returnAllCategories}></SearchForm>
-            {isDetectedDataVisible && (
-                <div className="detecteddatalist">{displayDetectedData.map(items => {
-                    return items.map(item => (<div className="detecteddata">
-                        <p className="detecteddata__venodor">{item.vendor || "..."}</p>
-                        <p className="detecteddata__amount">{item.amount || "..."}</p>
-                        <p className="detecteddata__category">{item.category || "..."}</p>
-                        <p className="detecteddata__unit">{item.unit || "..."}</p>
-                    </div>))
 
-                })}</div>)}
+            {isDetectedDataVisible && (
+                <section className="sectionblock">
+                    <h2 className="sectionblock__title">Результаты распознания</h2>
+                    <hr className="sectionblock__hr" />
+                    <p className="sectionblock__desc">Вот что нам удалось распознать:</p>
+
+                    <div className="detecteddatalist">{displayDetectedData.map(items => {
+                        return items.map(item => (<div className="detecteddata">
+                            <p className="detecteddata__value detecteddata__value_type-category">{item.category || "..."}</p>
+                            <p className="detecteddata__value detecteddata__value_type-vendor">{item.vendor || "..."}</p>
+                            <p className="detecteddata__value detecteddata__value_type-amount">{item.amount || "..."}</p>
+                            <p className="detecteddata__value detecteddata__value_type-unit">{item.unit || "..."}</p>
+                        </div>))
+
+                    })}
+                    </div>
+                </section>
+            )}
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => {
@@ -318,15 +332,18 @@ export default function Products({ categories = [], getProductsByCategory, handl
                 handleMore={() => {
                     setDisplayProdcuts(displayProducts.concat(getMoreItems(parsedProducts)))
                 }}
+                mod="list__grid_mod-products"
             >
                 <div style={displayCategoriesMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayCategoriesPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayProducts.map((product) => {
+                    console.log(product)
                     return <ProductCard
                         key={product._id}
                         data={product}
                         image={product.images[0]}
                         name={product.name}
+                        price={product.prices.price}
                         counter={getItemCount(product)}
                         illusiveCounter={product.illusiveCounter || -1}
                         handleItemAdd={handleItemSelect}

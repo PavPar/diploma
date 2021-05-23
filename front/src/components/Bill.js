@@ -116,6 +116,7 @@ export default function Bill({ handleOrderSubmit }) {
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => { }}
+                mod="list__grid_mod-products"
             >
                 <div style={displayMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Корзина пуста</div>
                 <div style={displayPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
@@ -127,6 +128,7 @@ export default function Bill({ handleOrderSubmit }) {
                         image={product.images[0]}
                         name={product.name}
                         counter={count}
+                        price={product.prices.price}
                         handleItemAdd={handleItemSelect}
                     />
                 })}

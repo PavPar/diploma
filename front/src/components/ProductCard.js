@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, illusiveCounter=0,...props }) {
+export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, illusiveCounter=0,price,...props }) {
     const inputRef = useRef()
 
     const [itemCounter, setItemCounter] = useState(counter)
@@ -32,11 +32,17 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
             handleItemAdd(data, itemCounter)
         }
     }, [itemCounter])
-    
+
+    function parsePrice(num){
+        const values = `${num}`.split('.');
+        return `${values[0]} руб. ` + (values[1]?`${values[1]} коп.`:'');
+    }
+
     return (
         <div className="productcard">
             <img className="productcard__thumbnail" src={image} alt={name}></img>
             <p className="productcard__name">{name}</p>
+            <p className="productcard__price">{parsePrice(price)}</p>
             <div className="productcard__buttonblock">
                 {(() => {
                     if (itemCounter <= 0) {

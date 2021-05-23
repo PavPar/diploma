@@ -2,7 +2,7 @@
 @import url(./__grid/list__grid.css);
 @import url(./__more/list__more.css);
 @import url(./__grid/_mod/list__grid_mod-categories.css);
-
+@import url(./__grid/_mod/list__grid_mod-products.css);
 .list {
   padding-top: 70px;
   padding-bottom: 80px;

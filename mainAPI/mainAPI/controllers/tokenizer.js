@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const ErrorHandler = require('../utils/errorHandler/ErrorHandler');
 const { getPartnerCategoriesNoResp } = require('./partner')
 const fs = require('fs'); //use the file system so we can save files
-const handleError = (err) => {
+const handleError = (place="",err) => {
     if (err.name === 'ValidationError') {
         throw (new ErrorHandler.BadRequestError('Не правильный ID'));
     }
@@ -10,7 +10,7 @@ const handleError = (err) => {
     if (err.name === 'CastError') {
         throw new ErrorHandler.NotFoundError('Партнер не найден');
     }
-    console.log(err);
+    console.log(place,err);
     throw (err);
 };
 
@@ -43,7 +43,7 @@ module.exports.getAudioTokenizedResult = (req, res, next) => {
     fetch(`https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?folderId=${process.env.YC_FOLDERID}&lang=ru-RU`, {
         headers:
         {
-            "Authorization": `Bearer ${process.env.YC_TOKEN}`
+            "Authorization": `Api-Key ${process.env.YC_TOKEN}`
         },
         method: 'POST',
         body: fs.createReadStream(req.file.path)
@@ -62,13 +62,13 @@ module.exports.getAudioTokenizedResult = (req, res, next) => {
                         .then(parseResult)
                         .then((result) => { res.send(result); })
                         .catch((err) => handleError(err))
-                        .catch((err) => next(err));
+                        .catch((err) => next("tokenizer",err));
                 })
-                .catch((err) => handleError(err))
+                .catch((err) => handleError("partner",err))
                 .catch((err) => next(err));
             fs.unlinkSync(req.file.path);
         })
-        .catch((err) => handleError(err))
+        .catch((err) => handleError("YC",err))
         .catch((err) => next(err));
 
 };
