@@ -103,7 +103,7 @@ input {
 
 .partnerList {
   display: grid;
-  justify-content: center;
+  justify-items: center;
   grid-template-columns: 1fr;
   grid-template-rows: 100px;
   max-width: 75vw;
@@ -116,7 +116,9 @@ input {
 .partner {
   display: flex;
   font-size: 24px;
-  border: 1px black solid;
+  background-color: #2191FB;
+  border: 1px #2191FB solid;
+  color: white;
   border-radius: 15px;
   width: 100%;
   height: 100%;
@@ -124,10 +126,16 @@ input {
   align-items: center;
 }
 
-.partner:hover {
-  background-color: black;
-  color: white;
+
+@media screen and (max-width: 900px) {
+  .partner {
+    max-width: 500px;
+    width: 100%;
+    min-height: 50px;
+    text-align: center;
+  }
 }
+
 
 .productcard {
   display: grid;
@@ -138,6 +146,7 @@ input {
   border: 2px #118AB2 solid;
   border-radius: 4px;
   grid-template-areas: "image image" "name name" "price buttonblock";
+  grid-template-rows: 4fr 1fr 1fr;
   gap: 15px;
   padding: 5px;
 }
@@ -147,6 +156,7 @@ input {
   max-width: 100%;
   height: 100%;
   justify-self: center;
+  object-fit: cover;
 }
 
 .productcard__name {
@@ -156,6 +166,8 @@ input {
 
 .productcard__price {
   grid-area: price;
+  justify-self: center;
+  align-self: center;
 }
 
 .productcard__buttonblock {
@@ -233,6 +245,7 @@ input {
   align-items: center;
   color: white;
   border-radius: 5px;
+  overflow: hidden;
 }
 
 .categorycard__background {
@@ -241,25 +254,68 @@ input {
   object-fit: cover;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .categorycard__name {
   font-size: 25px;
+  z-index: 2;
 }
 
 .steps {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: auto;
   justify-items: center;
+  margin: 100px 0;
+}
+
+@media screen and (max-width: 900px) {
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 50px 0;
+    padding: 0 20px;
+  }
 }
 
 .steps__step {
-  color: black;
+  color: white;
   text-decoration: none;
-  border: 1px black solid;
   border-radius: 10px;
   padding: 10px;
+  width: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+@media screen and (max-width: 900px) {
+  .steps__step {
+    max-width: 500px;
+    width: 100%;
+    height: 50px;
+    min-height: 50px;
+    text-align: center;
+  }
+}
+
+.steps__step_color-light {
+  background-color: #6290C8;
+}
+
+.steps__step_color-normal {
+  background-color: #376996;
+}
+
+.steps__step_color-dark {
+  background-color: #1F487E;
+}
+
+.steps__step_selected-light {
+  background-color: #329F5B;
 }
 
 .detecteddata {
@@ -393,6 +449,4 @@ input {
   width: 100%;
 }
 
-.list__grid_mod-products{
-
-}
+.list__grid_mod-products {}

@@ -323,6 +323,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
                         name={category.name}
                         handleSelect={handleCategorySelect}
                         data={category}
+                        image={category.background}
                     />
                 })}
             </List>
