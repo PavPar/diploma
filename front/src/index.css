@@ -126,7 +126,6 @@ input {
   align-items: center;
 }
 
-
 @media screen and (max-width: 900px) {
   .partner {
     max-width: 500px;
@@ -136,12 +135,12 @@ input {
   }
 }
 
-
 .productcard {
   display: grid;
   box-shadow: 5px 5px 5px #80727B;
   box-sizing: border-box;
-  /* height: 00px; */
+  max-height: 320px;
+  max-width: 400px;
   width: 100%;
   border: 2px #118AB2 solid;
   border-radius: 4px;
@@ -450,3 +449,35 @@ input {
 }
 
 .list__grid_mod-products {}
+
+.popup_type-product {
+  width: 100%;
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: 7vh auto;
+}
+
+.sectionblock_mod-product {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.productinfo {
+  display: grid;
+  grid-template-areas: "card title" "card desc";
+  gap: 20px;
+  padding: 10px;
+}
+
+.productinfo__title {
+  grid-area: title;
+}
+
+.productinfo__desc {
+  grid-area: desc;
+}
+
+.productinfo__card {
+  grid-area: card;
+}

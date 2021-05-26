@@ -116,8 +116,12 @@ function App() {
     return MainApi.sendOrder(selectedPartnerData._id, order)
   }
 
-  function postVoiceRecognition(audioURL){
-    return MainApi.audioSearch(selectedPartnerData._id,audioURL)
+  function postVoiceRecognition(audioURL) {
+    return MainApi.audioSearch(selectedPartnerData._id, audioURL)
+  }
+
+  function handleAlternativeSearch(itemID) {
+    return MainApi.recomendItem(selectedPartnerData._id, itemID)
   }
 
   //Восстановление данных выбранного пратнера
@@ -199,6 +203,7 @@ function App() {
               getProductsByCategory={getProductByCategory}
               handleTokenizatorSearch={handleTokenizatorSearch}
               postVoiceRecognition={postVoiceRecognition}
+              handleAlternativeSearch={handleAlternativeSearch}
             />
           </ProtectedRoute>
           <ProtectedRoute redirectTo="/order/partner" controlState={isPartnerSelected} path="/order">
@@ -218,7 +223,7 @@ function App() {
           <Profile userInfo={userInfo} handleLogout={handleLogout} handlePatch={handlePatch}></Profile>
         </userContext.Provider>
       </ProtectedRoute>
- 
+
       <Route exact path="/signup">
         <Register handleSubmit={handleRegister} handleAuth={handleLogin}></Register>
       </Route>

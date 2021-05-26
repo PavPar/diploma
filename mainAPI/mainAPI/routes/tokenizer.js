@@ -16,4 +16,6 @@ router.post('/tokenize', celebrate({
 
 router.post('/audiotokenize',type,tokenizerController.getAudioTokenizedResult)
 
+router.post('/recomenditem',tokenizerController.getItemAlternative)
+
 module.exports = router;

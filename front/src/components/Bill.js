@@ -4,7 +4,7 @@ import List from './List';
 
 import InfoTooltip from './InfoTooltip'
 import ProductCard from './ProductCard'
-
+import SectionBlock from './SectionBlock'
 
 import { useRef, useState } from 'react';
 import { movieMSG } from '../configs/messages';
@@ -16,16 +16,17 @@ export default function Bill({ handleOrderSubmit }) {
     const [displayPreLoader, setPreLoader] = useState(false);
     const [popupMessage, setPopupMessage] = useState(movieMSG.unknownErr)
     const [order, setOrder] = useState(getOrderFromLocalStorage());
+    const [totalPrice, setTotalPrice] = useState(0)
 
     function handleSubmit() {
-        const orderArr = order.map(product => { return { id: product.data.id, count: product.count } })
+        const orderArr = order.map(product => { return { id: product.data.id, data: product.data, count: product.count } })
 
-        if(orderArr.length == 0){
+        if (orderArr.length == 0) {
             setPopupMessage("Корзина пуста")
             setStatusPopupOpen(true)
             return;
         }
-    
+
         handleOrderSubmit(orderArr)
             .then(() => {
                 setAuthStatus(true)
@@ -33,6 +34,9 @@ export default function Bill({ handleOrderSubmit }) {
                 setStatusPopupOpen(true)
                 setOrder([])
                 localStorage.removeItem(localStorageNames.products)
+                setDisplayMessage(true)
+                setTotalPrice(0)
+
             })
             .catch((err) => {
                 console.log(err)
@@ -87,32 +91,35 @@ export default function Bill({ handleOrderSubmit }) {
     }
 
     function handleItemSelect(data, count) {
-        console.log(data, count)
         if (count > 0) {
             addToOrder({ data, count })
         } else {
             removeFromOrder({ data, count })
         }
+
+        const rawPrice = order.reduce((acc, currval) => {
+            return acc + (currval.data.prices.price * currval.count)
+        }, 0.0)
+
+        setTotalPrice(Math.round(rawPrice * 100) / 100)
+        setDisplayMessage(!order.length > 0)
         console.log(order)
     }
 
-
-    function getItemCount(product) {
-        const index = order.findIndex(orderItem => orderItem.data._id === product._id)
-        if (index >= 0) {
-            return order[index].count
-        }
-        return 0
+    function parsePrice(num) {
+        const values = `${num}`.split('.');
+        return `${values[0]} руб. ` + (values[1] ? `${values[1]} коп.` : '');
     }
 
-    useEffect(()=>{
-        setDisplayMessage(!order.length>0)
-    },order)
+
+    useEffect(() => {
+        setDisplayMessage(!order.length > 0)
+    }, order)
 
     return (
         <>
             {/* <SearchForm inputRef={inputRef}></SearchForm> */}
-            <button style={order.length>0?{}:{display:'none'}} className="confirmorder" onClick={handleSubmit}>Подтвердить заказ</button>
+
             <List
                 isMoreBtnVisible={false}
                 handleMore={() => { }}
@@ -139,7 +146,16 @@ export default function Bill({ handleOrderSubmit }) {
                 isOk={isAuthOk}
                 msgText={isAuthOk ? movieMSG.ok : popupMessage}
             ></InfoTooltip>
+            <SectionBlock
+                title={`Итого : ${parsePrice(totalPrice)}`}
 
+            >
+                <button
+                    style={order.length > 0 ? {} : { display: 'none' }}
+                    className="confirmorder"
+                    onClick={handleSubmit}
+                >Подтвердить заказ</button>
+            </SectionBlock>
         </>
     )
 }

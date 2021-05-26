@@ -47,18 +47,6 @@ module.exports.getAllPartners = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.getPartnerProducts = (req, res, next) => {
-  Partner.findById(req.params.partnerID)
-    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
-    .then((partnerData) => fetch(`${partnerData.baseUrl}/products`, {
-      method: 'GET',
-    }))
-    .then(parseResult)
-    .then((result) => { res.send(result); })
-    .catch((err) => handleError(err))
-    .catch((err) => next(err));
-};
-
 module.exports.getPartnerCategories = (req, res, next) => {
   Partner.findById(req.params.partnerID)
     .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
@@ -71,7 +59,7 @@ module.exports.getPartnerCategories = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.getPartnerProductByCategory = (req,res,next) =>{
+module.exports.getPartnerProductByCategory = (req, res, next) => {
   Partner.findById(req.params.partnerID)
     .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
     .then((partnerData) => fetch(`${partnerData.baseUrl}/products/${req.params.categoryID}`, {
@@ -87,6 +75,16 @@ module.exports.getPartnerCategoriesNoResp = (partnerID) => {
   return Partner.findById(partnerID)
     .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
     .then((partnerData) => fetch(`${partnerData.baseUrl}/categories`, {
+      method: 'GET',
+    }))
+    .then(parseResult)
+};
+
+
+module.exports.getPartnerProductsNoResp = (partnerID) => {
+  return Partner.findById(partnerID)
+    .orFail(() => { throw new ErrorHandler.NotFoundError('Партнер не найден'); })
+    .then((partnerData) => fetch(`${partnerData.baseUrl}/products`, {
       method: 'GET',
     }))
     .then(parseResult)

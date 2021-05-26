@@ -41,7 +41,7 @@ export default function Login({ handleSubmit }) {
 
         handleSubmit({ email, password })
             .then((res) => {
-                history.push('/order')
+                history.push('/order/partner')
             })
             .catch((err) => {
                 console.log(err)

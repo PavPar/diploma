@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
 const ErrorHandler = require('../utils/errorHandler/ErrorHandler');
-const { getPartnerCategoriesNoResp } = require('./partner')
+const { getPartnerCategoriesNoResp, getPartnerProductsNoResp } = require('./partner')
 const fs = require('fs'); //use the file system so we can save files
-const handleError = (place="",err) => {
+const handleError = (place = "", err) => {
     if (err.name === 'ValidationError') {
         throw (new ErrorHandler.BadRequestError('Не правильный ID'));
     }
@@ -10,7 +10,7 @@ const handleError = (place="",err) => {
     if (err.name === 'CastError') {
         throw new ErrorHandler.NotFoundError('Партнер не найден');
     }
-    console.log(place,err);
+    console.log(place, err);
     throw (err);
 };
 
@@ -39,7 +39,7 @@ module.exports.getTokenizedResult = (req, res, next) => {
 module.exports.getAudioTokenizedResult = (req, res, next) => {
     console.log("hey")
     const { partnerID } = req.body;
-    console.log("partnerID",partnerID)
+    console.log("partnerID", partnerID)
     fetch(`https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?folderId=${process.env.YC_FOLDERID}&lang=ru-RU`, {
         headers:
         {
@@ -50,7 +50,7 @@ module.exports.getAudioTokenizedResult = (req, res, next) => {
     })
         .then(parseResult)
         .then((result) => {
-            console.warn("detected",result)
+            console.warn("detected", result)
             getPartnerCategoriesNoResp(partnerID)
                 .then((categories) => {
                     fetch(`${process.env.TOKENIZER_BASEURL}/tokenize`,
@@ -62,13 +62,40 @@ module.exports.getAudioTokenizedResult = (req, res, next) => {
                         .then(parseResult)
                         .then((result) => { res.send(result); })
                         .catch((err) => handleError(err))
-                        .catch((err) => next("tokenizer",err));
+                        .catch((err) => next("tokenizer", err));
                 })
-                .catch((err) => handleError("partner",err))
+                .catch((err) => handleError("partner", err))
                 .catch((err) => next(err));
             fs.unlinkSync(req.file.path);
         })
-        .catch((err) => handleError("YC",err))
+        .catch((err) => handleError("YC", err))
         .catch((err) => next(err));
 
+};
+
+
+
+module.exports.getItemAlternative = (req, res, next) => {
+    fetch(`${process.env.TOKENIZER_BASEURL}/recomenditem`,
+        {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: JSON.stringify({ "itemID": req.body.itemID, "partnerID": req.body.partnerID })
+        })
+        .then(parseResult)
+        .then(
+            alternativeItems => {
+                console.log(alternativeItems)
+                getPartnerProductsNoResp(req.body.partnerID)
+                    .then(items => {console.log(items); return items.filter(item => {
+                        return alternativeItems.some(aItem=>aItem == item._id)
+                    })})
+                    .then((result) => { res.send(result); })
+                    .catch((err) => handleError(err))
+                    .catch((err) => next(err))
+            }
+
+        )
+        .catch((err) => handleError(err))
+        .catch((err) => next(err));
 };

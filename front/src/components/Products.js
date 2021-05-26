@@ -10,12 +10,14 @@ import AudioRecord from './AudioRecord'
 import { createRef, useRef, useState } from 'react';
 import { movieMSG } from '../configs/messages';
 import { cardsOnWidth, localStorageNames } from "../configs/constants";
-import YandexCloudAPI from "../utils/YandexCloudAPI";
+
 
 import useWindowDimensions from '../utils/useWindowDimensions'
+import SectionBlock from './SectionBlock';
+import Popup from './Popup';
 // import useRecorder from '../utils/useMyRecorder'
 
-export default function Products({ categories = [], getProductsByCategory, handleTokenizatorSearch, postVoiceRecognition }) {
+export default function Products({ categories = [], getProductsByCategory, handleTokenizatorSearch, postVoiceRecognition, handleAlternativeSearch }) {
     const inputRef = useRef();
 
     const [parsedProducts, setParsedProducts] = useState([]) // Все продукты полученные из запросы 
@@ -24,6 +26,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
     const [displayProducts, setDisplayProdcuts] = useState([]) // Все продукты отображаемые на экран 
     const [displayProductsPreLoader, setProductsPreloader] = useState(false); // Отображение загрузчика
     const [displayProductsMessage, setProdcutsDisplayMessage] = useState(false); // Отображение сообщения о не найденых
+    const [cashedProducts, setCashedProdcuts] = useState([]) 
 
     const [displayCategories, setDisplayCategory] = useState(categories);// Отображаемые категории
     const [displayCategoriesPreLoader, setCategoriesPreloader] = useState(false); // Отображение загрузчика
@@ -40,7 +43,11 @@ export default function Products({ categories = [], getProductsByCategory, handl
     const [isDetectedDataVisible, setDetectedDataVisible] = useState(false)
     const [showProductsMoreBtn, setShowProductsMoreBtn] = useState(false)//Управление видимостью кнопки больше
 
+    const [selectedItemData, setSelectedItemData] = useState({});
+    const [alternativeItems, setAlternatvie] = useState([])
+    const [showItemPopup, setItemPopup] = useState(false);
     const { width } = useWindowDimensions();
+
     // const [audioURL, isRecording, startRecording, stopRecording, getAudioBlob] = useRecorder();
 
     //Выполнить поиск
@@ -203,13 +210,25 @@ export default function Products({ categories = [], getProductsByCategory, handl
 
     // Произвести выбор товара
     function handleItemSelect(data, count) {
-        console.log(data, count)
+        if (count > 0) {
+            addToOrder({ data, count })
+        } else {
+            removeFromOrder({ data, count })
+        }
+
+        console.log(order)
+    }
+
+    // Произвести выбор товара
+    function handleItemSelectRender(data, count) {
         if (count > 0) {
             addToOrder({ data, count })
         } else {
             removeFromOrder({ data, count })
         }
         console.log(order)
+        setCashedProdcuts([...displayProducts])
+        setDisplayProdcuts([])
     }
 
     // Получить данные о кол-ве товара
@@ -270,18 +289,26 @@ export default function Products({ categories = [], getProductsByCategory, handl
         setDisplayCategory(categories)
     }, [categories])
 
+    useEffect(() => {
+        if (selectedItemData._id) {
+            handleAlternativeSearch(selectedItemData._id)
+                .then(res => {
+                    console.log("Rec:", res)
+                    setAlternatvie(res || [])
+                })
+                .catch(err => console.log(err))
+        }
+    }, [selectedItemData])
+
+    useEffect(()=>{
+        console.log('fuck',displayProducts.length == 0 ,cashedProducts.length !== 0)
+        if(displayProducts.length == 0 && cashedProducts.length !== 0){
+            setDisplayProdcuts([...cashedProducts])
+        }
+    },[displayProducts,cashedProducts])
+
     return (
         <>
-            {/* {
-                isRecording ? (
-                    <button onClick={stopRecording} disabled={!isRecording}>
-                        stop recording
-                    </button>) : (
-                    <button onClick={startRecording} disabled={isRecording}>
-                        start recording
-                    </button>)
-            }
-            <button onClick={handleVoiceSearch}>Send</button> */}
             <section className="audiosearch">
                 <h2 className="audiosearch__title">Голосовой заказ продуктов!</h2>
                 <hr className="audiosearch__hr" />
@@ -338,7 +365,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
                 <div style={displayCategoriesMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
                 <div style={displayCategoriesPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
                 {displayProducts.map((product) => {
-                    console.log(product)
+                    console.log("render")
                     return <ProductCard
                         key={product._id}
                         data={product}
@@ -348,6 +375,10 @@ export default function Products({ categories = [], getProductsByCategory, handl
                         counter={getItemCount(product)}
                         illusiveCounter={product.illusiveCounter || -1}
                         handleItemAdd={handleItemSelect}
+                        handleItemSelect={(cardData) => { 
+                            setSelectedItemData(cardData); 
+                            setItemPopup(true) 
+                        }}
                     />
                 })}
             </List>)}
@@ -357,7 +388,74 @@ export default function Products({ categories = [], getProductsByCategory, handl
                 isOk={isPopupStatusOk}
                 msgText={isPopupStatusOk ? movieMSG.ok : popupMessage}
             ></InfoTooltip>
+            {
+                <Popup
+                    name="product"
+                    isOpen={showItemPopup}
+                    onClose={() => {
+                        setSelectedItemData({})
+                        setItemPopup(false)
+                    }}
+                >
+                    <SectionBlock
+                        mod="sectionblock_mod-product"
+                        title={"О товаре"}
+                    >
+                        {
+                            <div className="productinfo">
+                                <div className="productinfo__card">
+                                    {
+                                        selectedItemData._id && (
+                                            <ProductCard
+                                                key={selectedItemData._id}
+                                                data={selectedItemData}
+                                                image={selectedItemData.images[0]}
+                                                name={selectedItemData.name}
+                                                price={selectedItemData.prices.price}
+                                                counter={getItemCount(selectedItemData)}
+                                                illusiveCounter={selectedItemData.illusiveCounter || -1}
+                                                handleItemAdd={handleItemSelectRender}
+                                            />
+                                        )
+                                    }
+                                </div>
+                                <h2 className="productinfo__title">{selectedItemData.name || ""}</h2>
+                                <p className="productinfo__desc">{selectedItemData.description || ""}</p>
+                            </div>
 
+                        }
+                        {alternativeItems.length > 0 && (<SectionBlock
+                            description="С этим товаром также берут"
+                        >
+                            <List
+                                isMoreBtnVisible={false}
+                                handleMore={() => {
+
+                                }}
+                                mod="list__grid_mod-categories"
+                            >
+                                <div style={displayProductsMessage ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Ничего не найдено</div>
+                                <div style={displayProductsPreLoader ? { "visibility": "visible" } : { "visibility": "hidden" }} className="list__notfound">Загрузка ...</div>
+                                {alternativeItems.map((product) => {
+                                    return <ProductCard
+                                        key={product._id}
+                                        data={product}
+                                        image={product.images[0]}
+                                        name={product.name}
+                                        price={product.prices.price}
+                                        counter={getItemCount(product)}
+                                        illusiveCounter={product.illusiveCounter || -1}
+                                        handleItemAdd={handleItemSelect}
+                                        handleItemSelect={(cardData) => { setSelectedItemData(cardData) }}
+                                        isBtnVisible={false}
+                                    />
+                                })}
+                            </List>
+                        </SectionBlock>)}
+                    </SectionBlock>
+
+                </Popup>
+            }
         </>
     )
 }

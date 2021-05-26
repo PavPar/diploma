@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, illusiveCounter=0,price,...props }) {
+
+export default function MovieCardSaved({ data, image, name, counter=0, handleItemAdd, illusiveCounter=0,price,handleItemSelect=()=>{},isBtnVisible=true,...props }) {
     const inputRef = useRef()
 
     const [itemCounter, setItemCounter] = useState(counter)
@@ -39,11 +40,11 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
     }
 
     return (
-        <div className="productcard">
-            <img className="productcard__thumbnail" src={image} alt={name}></img>
+        <div className="productcard" >
+            <img className="productcard__thumbnail" src={image} alt={name} onClick={()=>{handleItemSelect(data)}}></img>
             <p className="productcard__name">{name}</p>
             <p className="productcard__price">{parsePrice(price)}</p>
-            <div className="productcard__buttonblock">
+           { isBtnVisible && (<div className="productcard__buttonblock">
                 {(() => {
                     if (itemCounter <= 0) {
                         return (<button style={illusiveCounter>0?{backgroundColor:"gold"}:{}} className="productcard__button productcard__button-type-add" onClick={handleAdd}>+</button>)
@@ -67,7 +68,7 @@ export default function MovieCardSaved({ data, image, name, counter=0, handleIte
                             </>)
                     }
                 })()}
-            </div>
+            </div>)}
 
         </div>
 

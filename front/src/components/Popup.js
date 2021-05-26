@@ -7,7 +7,10 @@ export default function Popup({ name, isOpen, onClose, children, }) {
     }
 
     return (
-        <section style={!isOpen ?{ visibility: "hidden" }:{}} className={`popup ${!isOpen && 'popup_visibility-hidden'} popup-${name}`}>
+        <section 
+        style={!isOpen ?{ visibility: "hidden" }:{}} 
+        className={`popup ${!isOpen && 'popup_visibility-hidden'} popup-${name}`} 
+        >
 
             <form noValidate
                 className={`popup__window popup_type-${name}`}

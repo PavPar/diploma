@@ -103,6 +103,10 @@ class MainApi {
         return this._sendDataToServer("POST", "/tokenize", { partnerID, searchReq })
     }
 
+    recomendItem(partnerID, itemID) {
+        return this._sendDataToServer("POST", "/recomenditem", { partnerID, itemID })
+    }
+
 
     audioSearch(partnerID, audioURL) {
         return fetch(audioURL)
@@ -128,7 +132,7 @@ class MainApi {
                 }
                 return Promise.reject({ status: res.status, msg: res.statusText });
             })
-            .catch(err=>console.log(err))
+            .catch(err => console.log(err))
     }
     //Проверка токена
     checkToken(token) {
