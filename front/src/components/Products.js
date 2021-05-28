@@ -219,7 +219,7 @@ export default function Products({ categories = [], getProductsByCategory, handl
         console.log(order)
     }
 
-    // Произвести выбор товара
+    // Произвести выбор товара с перерисовкой
     function handleItemSelectRender(data, count) {
         if (count > 0) {
             addToOrder({ data, count })
@@ -301,9 +301,9 @@ export default function Products({ categories = [], getProductsByCategory, handl
     }, [selectedItemData])
 
     useEffect(()=>{
-        console.log('fuck',displayProducts.length == 0 ,cashedProducts.length !== 0)
         if(displayProducts.length == 0 && cashedProducts.length !== 0){
             setDisplayProdcuts([...cashedProducts])
+            setCashedProdcuts([])
         }
     },[displayProducts,cashedProducts])
 

@@ -457,6 +457,13 @@ input {
   margin: 7vh auto;
 }
 
+@media screen and (max-width: 800px) {
+  .popup_type-product {
+    margin: 15vh auto;
+    max-height: 80vh;
+  }
+}
+
 .sectionblock_mod-product {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -468,6 +475,22 @@ input {
   grid-template-areas: "card title" "card desc";
   gap: 20px;
   padding: 10px;
+}
+
+@media screen and (max-width: 800px) {
+  .productinfo {
+    justify-items: center;
+    grid-template-areas: "card" "title" "desc";
+    font-size: 14px;
+  }
+}
+
+
+@media screen and (max-width: 600px) {
+  .productinfo {
+    grid-template-areas: "card" "title" "desc";
+    font-size: 10px;
+  }
 }
 
 .productinfo__title {
