@@ -24,9 +24,9 @@ export default function Products({ categories = [], getProductsByCategory, handl
     const [order, setOrder] = useState(getOrderFromLocalStorage());//Заказ пользователя
 
     const [displayProducts, setDisplayProdcuts] = useState([]) // Все продукты отображаемые на экран 
+    const [cashedProducts, setCashedProdcuts] = useState([]) 
     const [displayProductsPreLoader, setProductsPreloader] = useState(false); // Отображение загрузчика
     const [displayProductsMessage, setProdcutsDisplayMessage] = useState(false); // Отображение сообщения о не найденых
-    const [cashedProducts, setCashedProdcuts] = useState([]) 
 
     const [displayCategories, setDisplayCategory] = useState(categories);// Отображаемые категории
     const [displayCategoriesPreLoader, setCategoriesPreloader] = useState(false); // Отображение загрузчика

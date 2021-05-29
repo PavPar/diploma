@@ -213,6 +213,7 @@ function App() {
               categories={categories}
               getProductsByCategory={getProductByCategory}
               handleOrderSubmit={handleOrderSubmit}
+              handleAlternativeSearch={handleAlternativeSearch}
             />
           </ProtectedRoute>
         </Switch>

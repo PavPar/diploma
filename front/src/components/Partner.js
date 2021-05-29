@@ -1,5 +1,5 @@
 import React from 'react';
-export default function Footer({ name, partnerData, handleSelect }, ...props) {
+export default function Partner({ name, partnerData, handleSelect }, ...props) {
     function handleClick() {
         handleSelect(partnerData)
     }
